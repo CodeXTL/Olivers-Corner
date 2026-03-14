@@ -95,7 +95,7 @@
 	></div>
 
 	<footer>
-		<p>Hi, I'm a footer!</p>
+		<p>No, I am your footer.</p>
 	</footer>
 </div>
 
