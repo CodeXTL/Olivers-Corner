@@ -1,4 +1,11 @@
-# sv
+# Oliver's Corner
+Welcome to the repository containing my personal website "Oliver's Corner"!
+
+## Why Oliver's Corner?
+The complete sentimental meaning is "Oliver's corner of the internet", but I figured a shorter domain works much better
+for memorability and SEO.
+
+<!-- # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
@@ -39,4 +46,4 @@ npm run build
 
 You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment. -->
