@@ -2,8 +2,6 @@
 	import { onMount } from 'svelte';
 
 	const name = 'Oliver Lee';
-	const bio =
-		"Hello, welcome to my website! This is a work-in-progress, so it's a bit lonely at the moment.";
 	const links = [
 		{ label: 'GitHub', url: 'https://github.com/CodeXTL' },
 		{ label: 'Email', url: 'mailto:xli3086@gatech.edu' }
@@ -212,7 +210,13 @@
 	<main>
 		<header>
 			<h1>{name}</h1>
-			<p>{bio}</p>
+			<p>
+				Welcome to my corner of the internet! I am an Electrical Engineering and Computer Science
+				student at Georgia Tech with a passion for semiconductor devices and VLSI. This website
+				serves as a creative outlet for me to explore interesting things as well as a portfolio of
+				my academic journey, showcasing my technical projects, career aspirations, and personal
+				growth.
+			</p>
 			<p>In the meantime, here's a ball to play around with.</p>
 			<ul>
 				<li>Click on any ball to drag it.</li>
