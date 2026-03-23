@@ -8,17 +8,22 @@
 	let ctx;
 	let isDrawing = false;
 
+	// Variable to track the canvas's physical size
+	let cWidth;
+	let cHeight;
+
 	// This runs once upon load to set up our paintbrush
 	onMount(() => {
 		ctx = canvas.getContext('2d');
-
-		// match canvas internal resolution to prevent blurry lines
-		canvas.width = canvas.offsetWidth;
-		canvas.height = canvas.offsetHeight;
 	});
 
+	$: if (canvas && cWidth && cHeight) {
+		canvas.width = cWidth;
+		canvas.height = cHeight;
+	}
+
 	function startDrawing(event) {
-        if (event.button != 0) return;
+		if (event.button != 0) return;
 
 		isDrawing = true;
 		draw(event);
@@ -29,9 +34,9 @@
 		ctx.beginPath();
 	}
 
-    function clearDrawing() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
+	function clearDrawing() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	}
 
 	function draw(event) {
 		if (!isDrawing) return;
@@ -68,11 +73,13 @@
 	<canvas
 		class="drawing-canvas"
 		bind:this={canvas}
+		bind:clientWidth={cWidth}
+		bind:clientHeight={cHeight}
 		on:mousedown={startDrawing}
 		on:mousemove={draw}
 		on:mouseup={stopDrawing}
 		on:mouseleave={stopDrawing}
-        on:contextmenu|preventDefault={clearDrawing}
+		on:contextmenu|preventDefault={clearDrawing}
 	></canvas>
 </div>
 
@@ -101,10 +108,10 @@
 			practically useful.
 		</p>
 		<p>And that's me on the right! Feel free to draw on me!</p>
-        <ul>
-            <li>Left click to draw.</li>
-            <li>Right click to clear.</li>
-        </ul>
+		<ul>
+			<li>Left click to draw.</li>
+			<li>Right click to clear.</li>
+		</ul>
 	</main>
 </div>
 

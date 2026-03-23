@@ -7,7 +7,7 @@
 		<h1>Career Goals</h1>
 
 		<p>
-			HMy long-term goal is to work in the semiconductor and hardware systems industry, contributing
+			My long-term goal is to work in the semiconductor and hardware systems industry, contributing
 			to the design and development of advanced integrated circuits and intelligent hardware
 			platforms. I am particularly interested in roles related to ASIC design, physical design, and
 			hardware acceleration for AI systems.
