@@ -55,7 +55,7 @@
 	}
 
 	:global(h1) {
-		font-size: 1rem;
+		font-size: 1.4rem;
 		font-weight: 600;
 		text-transform: uppercase;
 		letter-spacing: 0.1em;
@@ -64,7 +64,7 @@
 	}
 
 	:global(h2) {
-		font-size: 1.1rem;
+		font-size: 1.25rem;
 		font-weight: 600;
 		margin-top: 2.5rem;
 		margin-bottom: 1rem;

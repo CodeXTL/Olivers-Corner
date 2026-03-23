@@ -6,26 +6,25 @@
 	<h1>Technical Projects</h1>
 
 	<article class="project-block">
-		<div class="project-thumbnail">
-			<img src="/project-placeholder.jpg" alt="Discovery Project Thumbnail" />
-		</div>
+		<a class="project-thumbnail" href="/projects/project-camera">
+			<img src="/project-camera/Thumbnail.jpg" alt="DIY camera thumbnail" />
+        </a>
 
 		<div class="project-info">
-			<h2>Placeholder Project</h2>
+			<h2>PixShift: A DIY Camera</h2>
 			<p>
-				<strong>Overview:</strong> Description for future project.
-			</p>
-			<p>
-				<strong>Significance:</strong> Why is it important?
+				<strong>Overview:</strong> Creating a portable camera with a custom 8 by 8 pixel camera sensor
+				that is mounted on a linear actuator so that images at a higher resolution (16 by 8 pixels) can
+				be obtained. <a href="/projects/project-camera">Read more!</a>
 			</p>
 		</div>
 	</article>
 </main>
 
 <style>
-    main {
+	main {
 		padding: 10vw 10vw 10vw 10vw;
-    }
+	}
 
 	/* The main container for each project */
 	.project-block {
