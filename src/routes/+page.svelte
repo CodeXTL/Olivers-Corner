@@ -206,16 +206,16 @@
 	on:mouseup={stopDrag}
 />
 
-<div class="wrapper" on:mousedown|self={spawnBall} role="presentation">
+<div class="page-wrapper" on:mousedown|self={spawnBall} role="presentation">
 	<main>
 		<header>
 			<h1>{name}</h1>
 			<p>
 				Welcome to my corner of the internet! I am an Electrical Engineering and Computer Science
-				student at Georgia Tech with a passion for semiconductor devices and VLSI. This website
-				serves as a creative outlet for me to explore interesting things as well as a portfolio of
-				my academic journey, showcasing my technical projects, career aspirations, and personal
-				growth.
+				student at Georgia Tech with a passion for semiconductor devices, embedded systems, and
+				VLSI. This website serves as a creative outlet for me to explore interesting things as well
+				as a portfolio of my academic journey, showcasing my technical projects, career aspirations,
+				and personal growth.
 			</p>
 			<p>In the meantime, here's a ball to play around with.</p>
 			<ul>
@@ -244,59 +244,9 @@
 			role="presentation"
 		></div>
 	{/each}
-
-	<footer>
-		<p>No, I am your footer.</p>
-	</footer>
 </div>
 
 <style>
-	:global(body) {
-		margin: 0;
-		padding: 0;
-		background-color: #fafafa;
-		color: #111;
-		font-family:
-			ui-sans-serif,
-			system-ui,
-			-apple-system,
-			sans-serif;
-	}
-
-	.wrapper {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		min-height: 100vh;
-		padding: 0 10vw;
-	}
-
-	main {
-		max-width: 480px;
-	}
-
-	h1 {
-		font-size: 0.85rem;
-		font-weight: 600;
-		text-transform: uppercase;
-		letter-spacing: 0.1em;
-		margin-bottom: 1.5rem;
-		color: #000;
-	}
-
-	p {
-		font-size: 1.25rem;
-		line-height: 1.5;
-		margin-bottom: 1rem;
-		color: #333;
-	}
-
-	li {
-		font-size: 1.25rem;
-		line-height: 1.5;
-		color: #333;
-	}
-
 	nav {
 		display: flex;
 		flex-direction: column;
@@ -328,15 +278,6 @@
 	a:hover .arrow {
 		opacity: 1;
 		transform: translateX(0);
-	}
-
-	footer {
-		position: absolute;
-		bottom: 2rem;
-		font-size: 0.7rem;
-		color: #bbb;
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
 	}
 
 	.ball {

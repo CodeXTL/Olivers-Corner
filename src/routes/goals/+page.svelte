@@ -2,24 +2,37 @@
 	<title>Career Goals | Oliver's Corner</title>
 </svelte:head>
 
-<h1>Career Goals</h1>
+<div class="page-wrapper">
+	<main>
+		<h1>Career Goals</h1>
 
-<p>
-	Here is a description of my long-term career aspirations and the steps I plan to take to achieve
-	them, based on my ECE Roadmap[cite: 164, 167].
-</p>
+		<p>
+			HMy long-term goal is to work in the semiconductor and hardware systems industry, contributing
+			to the design and development of advanced integrated circuits and intelligent hardware
+			platforms. I am particularly interested in roles related to ASIC design, physical design, and
+			hardware acceleration for AI systems.
+		</p>
 
-<h2>Long-Term Vision</h2>
-<p>
-	Write about where you see yourself in the future (e.g., becoming a research engineer, starting a
-	business)[cite: 172].
-</p>
+		<p>
+			In the short term, I am focused on building a strong technical foundation through coursework,
+			research, and hands-on projects. Over the next few years, I plan to:
+		</p>
 
-<h2>Action Plan (Short-Term Steps)</h2>
-<ul>
-	<li><strong>Step 1:</strong> Take specific advanced courses (e.g., ECE 4XXX)[cite: 171].</li>
-	<li><strong>Step 2:</strong> Participate in undergraduate research or internships[cite: 171].</li>
-	<li>
-		<strong>Step 3:</strong> Detail another specific milestone you need to achieve[cite: 170].
-	</li>
-</ul>
+		<ul>
+			<li>
+				Gain industry experience through internships in semiconductor or hardware-focused companies
+			</li>
+			<li>Deepen my knowledge in VLSI design, signal processing, and embedded systems</li>
+			<li>
+				Contribute to research projects involving hardware-software co-design or advanced sensing
+				systems
+			</li>
+			<li>Build a portfolio of technical projects that demonstrate end-to-end system design</li>
+		</ul>
+
+		<p>
+			These steps will prepare me to transition into a full-time engineering role and eventually
+			contribute to cutting-edge advancements in hardware technology.
+		</p>
+	</main>
+</div>
