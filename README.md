@@ -6,8 +6,16 @@ The complete sentimental meaning is "Oliver's corner of the internet", but I fig
 for memorability and SEO.
 
 ## TODO:
-- [ ] Optimize dynamic components and website structure
-- [ ] Figure out better way to store files and data
+- [ ] Add `src/lib/` directory to improve modularity
+- [ ] Organized `static/` directory contents
+- [ ] Improve project page structure by removing hardcoded components
+- [ ] Update everything to Svelte 5 syntax
+- [ ] Add blogpost pages
+- [ ] Make navigation bar links more maintainable
+- [ ] Make homepage cleaner
+- [x] Make `+layout.svelte` cleaner (done 04/10/26)
+    - [x] Create `app.css` global stylesheet (done 04/10/26)
+    - [x] Create `Nav.svelte` component (done 04/10/26)
 
 <!-- # sv
 
