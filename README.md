@@ -5,6 +5,10 @@ Welcome to the repository containing my personal website "Oliver's Corner"!
 The complete sentimental meaning is "Oliver's corner of the internet", but I figured a shorter domain works much better
 for memorability and SEO.
 
+## TODO:
+- [ ] Optimize dynamic components and website structure
+- [ ] Figure out better way to store files and data
+
 <!-- # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
