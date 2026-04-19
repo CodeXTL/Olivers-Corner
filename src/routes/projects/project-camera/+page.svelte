@@ -8,7 +8,7 @@
 			href="/projects"
 			style="color: #888; text-decoration: none; margin-bottom: 2rem; display: inline-block;"
 		>
-			← Back to Projects
+			Back to Projects
 		</a>
 
 		<h1>PixShift: A DIY Camera</h1>
@@ -248,7 +248,7 @@
 				</video>
 
 				<p>
-					<strong>Video 1.</strong> Example of 16x8 pixel image reading as a flashlight is moved across
+					<strong>Video 2.</strong> Example of 16x8 pixel image reading as a flashlight is moved across
 					the camera's FOV.
 				</p>
 			</div>
