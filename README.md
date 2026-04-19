@@ -5,6 +5,18 @@ Welcome to the repository containing my personal website "Oliver's Corner"!
 The complete sentimental meaning is "Oliver's corner of the internet", but I figured a shorter domain works much better
 for memorability and SEO.
 
+## TODO:
+- [ ] Add `src/lib/` directory to improve modularity
+- [ ] Organized `static/` directory contents
+- [ ] Improve project page structure by removing hardcoded components
+- [ ] Update everything to Svelte 5 syntax
+- [ ] Add blogpost pages
+- [ ] Make navigation bar links more maintainable
+- [ ] Make homepage cleaner
+- [x] Make `+layout.svelte` cleaner (done 04/10/26)
+    - [x] Create `app.css` global stylesheet (done 04/10/26)
+    - [x] Create `Nav.svelte` component (done 04/10/26)
+
 <!-- # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).

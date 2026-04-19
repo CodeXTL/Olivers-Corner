@@ -5,20 +5,41 @@
 <main>
 	<h1>Technical Projects</h1>
 
-	<article class="project-block">
+	<div class="project-block">
+		<a class="project-thumbnail" href="/projects/project-mouse-camera">
+			<img src="/project-mouse-camera/Thumbnail.jpg" alt="Mouse camera thumbnail" />
+		</a>
+
+		<div class="project-info">
+			<h2>MouseCam: Imaging from an Optical Mouse Sensor</h2>
+			<p>
+				<strong>Completion Date:</strong> April 2026
+			</p>
+			<p>
+				<strong>Overview:</strong> MouseCam is a project with the goal of extracting live image data
+				from the optical sensor inside a 20-year-old Logitech mouse and streaming it wirelessly to a
+				PC for display. <a href="/projects/project-mouse-camera">Read more!</a>
+			</p>
+		</div>
+	</div>
+
+	<div class="project-block">
 		<a class="project-thumbnail" href="/projects/project-camera">
 			<img src="/project-camera/Thumbnail.jpg" alt="DIY camera thumbnail" />
-        </a>
+		</a>
 
 		<div class="project-info">
 			<h2>PixShift: A DIY Camera</h2>
 			<p>
-				<strong>Overview:</strong> Creating a portable camera with a custom 8 by 8 pixel camera sensor
-				that is mounted on a linear actuator so that images at a higher resolution (16 by 8 pixels) can
-				be obtained. <a href="/projects/project-camera">Read more!</a>
+				<strong>Completion Date:</strong> November 2025
+			</p>
+			<p>
+				<strong>Overview:</strong> Creating a portable camera with a custom 8 by 8 pixel camera
+				sensor that is mounted on a linear actuator so that images at a higher resolution (16 by 8
+				pixels) can be obtained. <a href="/projects/project-camera">Read more!</a>
 			</p>
 		</div>
-	</article>
+	</div>
 </main>
 
 <style>

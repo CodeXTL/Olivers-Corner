@@ -13,6 +13,7 @@ node_modules
 Thumbs.db
 
 # Env
+.vscode
 .env
 .env.*
 !.env.example
