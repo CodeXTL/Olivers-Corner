@@ -246,3 +246,76 @@ npm run lint      # Prettier check + ESLint
 **Tip:** `npm run build` is a good correctness check — because the whole site is
 prerendered, a broken internal link or a bad import fails the build instead of
 silently shipping.
+
+---
+
+## 8. Homepage physics (the ball mechanic)
+
+The home page (`src/routes/+page.svelte`) has a little toy: bouncing balls you
+can drop, drag, and fling. It was rewritten to be faster, smoother, and modern.
+Everything lives in that one file.
+
+### How it works now
+
+- **State (Svelte 5 runes).** `balls` is a `$state` array; each ball stores only
+  `{ id, x, y, vx, vy }` (position + velocity). The center is always `x/y +
+radius`, so it's computed, not stored — that removed a whole class of
+  "center out of sync with position" bugs.
+- **One animation loop.** A single `$effect` starts a `requestAnimationFrame`
+  loop and cancels it on cleanup. Each frame runs `step(dt)`: resolve
+  collisions, then apply gravity + movement + wall bounces to every ball that
+  isn't being held.
+- **Frame-rate independence.** `dt` is the time since the last frame measured in
+  "60fps frames" and clamped to 3. So the sim feels identical on a 60Hz or
+  144Hz display, and a backgrounded tab can't build up a huge time jump and
+  fling everything off-screen when you return.
+- **Collisions.** `resolveCollisions()` is an O(n²) pass over ball pairs: it
+  separates overlapping balls and exchanges velocity along the line between
+  their centers (scaled by `COLLISION_DAMPING`). A held ball shoves others but
+  isn't pushed itself.
+- **Drag + throw.** Pressing a ball sets `draggingId`; pointer moves reposition
+  it and track a smoothed pointer velocity; releasing converts that velocity
+  (clamped to `MAX_THROW`) into the ball's `vx/vy` — so you can fling it.
+- **Spawning.** Pressing empty background adds a ball at the cursor. `spawn`
+  only fires when the press target is the background itself (not the text or a
+  ball). `MAX_BALLS` caps the count (oldest is dropped) to keep collisions and
+  the DOM cheap.
+
+### The tunable knobs
+
+All at the top of the `<script>`, so you can adjust feel without touching logic:
+
+| Constant            | Effect                                                                        |
+| ------------------- | ----------------------------------------------------------------------------- |
+| `GRAVITY`           | How fast balls accelerate downward.                                           |
+| `BOUNDS_DAMPING`    | Energy kept on a wall bounce (1 = perfectly bouncy).                          |
+| `COLLISION_DAMPING` | Energy kept in a ball-to-ball hit.                                            |
+| `BALL_RADIUS`       | Ball size. Also update `width`/`height` in `.ball` CSS to match the diameter. |
+| `MAX_BALLS`         | Cap on how many balls exist at once.                                          |
+| `MAX_THROW`         | Speed limit when flinging a ball on release.                                  |
+
+### What changed from the old version (and why)
+
+| Before                                | After                                       | Why                                                                                    |
+| ------------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `left` / `top` inline styles          | `transform: translate(...)` + `will-change` | `transform` is GPU-composited and skips layout every frame — the main performance win. |
+| `balls = balls` after every mutation  | `$state` deep reactivity                    | Idiomatic Svelte 5; no manual re-assignment, fewer footguns.                           |
+| `requestAnimationFrame` with no delta | clamped delta-time `step(dt)`               | Consistent speed across monitor refresh rates.                                         |
+| Mouse events only (`on:mousedown` …)  | Pointer events (`onpointerdown` …)          | Now works on touchscreens/pens, not just a mouse.                                      |
+| Released balls dropped straight down  | Throw velocity from drag                    | Feels like actually throwing them.                                                     |
+| Unbounded ball count                  | `MAX_BALLS` cap                             | Bounds the O(n²) collision cost and DOM size.                                          |
+| Stored `x_center` / `y_center`        | Computed from `x`/`y`                       | Eliminated position/center desync bugs.                                                |
+| Unkeyed `{#each balls}`               | Keyed by `ball.id`                          | Correct DOM reuse, no unnecessary churn.                                               |
+
+> Note on the drag highlight: the ball's position uses the inline `transform`,
+> so the "grow while grabbing" effect appends `scale(1.1)` **inside that same
+> `transform`** (`translate(...) scale(1.1)`). Don't use the standalone `scale:`
+> CSS property for this — it's applied before `transform`, which multiplies the
+> translate and shifts the ball off the cursor by ~0.1× its position.
+
+### Possible next steps
+
+- Respect `prefers-reduced-motion` (e.g. don't auto-run gravity) for
+  accessibility.
+- Spatial partitioning (a grid) if you ever raise `MAX_BALLS` a lot — turns the
+  O(n²) collision check into roughly O(n).
