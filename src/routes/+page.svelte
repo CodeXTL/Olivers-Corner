@@ -1,212 +1,185 @@
 <script>
-	import { onMount } from 'svelte';
-
 	const name = 'Oliver Lee';
 	const links = [
 		{ label: 'GitHub', url: 'https://github.com/CodeXTL' },
 		{ label: 'Email', url: 'mailto:xli3086@gatech.edu' }
 	];
 
-	// Window dimensions
-	let w_width;
-	let w_height;
+	// --- Tunable physics constants (all in px, calibrated for 60fps) ---
+	const BALL_RADIUS = 25;
+	const BALL_DIAMETER = 2 * BALL_RADIUS;
+	const GRAVITY = 0.5; // downward acceleration per frame
+	const BOUNDS_DAMPING = 0.8; // energy kept when bouncing off a wall
+	const COLLISION_DAMPING = 0.9; // energy kept in a ball-to-ball hit
+	const MAX_BALLS = 60; // cap so collisions/DOM stay cheap
+	const MAX_THROW = 40; // clamp on fling speed when releasing a ball
 
-	// Some state vars
-	let is_dragging = false;
+	const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
-	// Ball params
-	let ball_radius = 25;
-	let ball_diameter = 2 * ball_radius;
-	let curr_id = 0;
+	// --- Reactive state (Svelte 5 runes) ---
+	let width = $state(0);
+	let height = $state(0);
 
-	// Array to hold the state of all balls
-	let balls = [
-		{
-			id: 0,
-			x: 100,
-			y: 100,
-			x_center: 100 - ball_radius,
-			y_center: 100 - ball_radius,
-			x_vel: 0,
-			y_vel: 0,
-			is_dragging: false
-		}
-	];
+	// A ball only stores position + velocity; its center is always x/y + radius.
+	let balls = $state([{ id: 0, x: 100 - BALL_RADIUS, y: 100 - BALL_RADIUS, vx: 0, vy: 0 }]);
+	let nextId = 1;
 
-	// Environment params
-	let g = 0.5;
-	let bounds_damping_factor = 0.8;
-	let collision_damping_factor = 0.9;
+	// Drag tracking. draggingId drives reactive styling; the rest are plain vars
+	// (they change every pointermove and don't need to trigger renders).
+	let draggingId = $state(null);
+	let dragVx = 0;
+	let dragVy = 0;
 
-	function startDrag(event, id) {
-		if (event.button == 0) {
-			for (let ball of balls) {
-				if (ball.id == id) {
-					ball.is_dragging = true;
-					break;
-				}
-			}
-		}
+	function spawn(event) {
+		// Only when clicking the background itself, not the text or a ball.
+		if (event.target !== event.currentTarget) return;
+		balls.push({
+			id: nextId++,
+			x: event.clientX - BALL_RADIUS,
+			y: event.clientY - BALL_RADIUS,
+			vx: 0,
+			vy: 0
+		});
+		if (balls.length > MAX_BALLS) balls.shift(); // drop the oldest
 	}
 
-	function stopDrag() {
-		for (let ball of balls) {
-			if (ball.is_dragging) {
-				ball.is_dragging = false;
-				break;
-			}
-		}
+	function grab(event, id) {
+		event.stopPropagation(); // don't also spawn a ball
+		event.preventDefault(); // avoid text selection / native drag
+		draggingId = id;
+		dragVx = 0;
+		dragVy = 0;
 	}
 
-	function onDrag(event) {
-		for (let ball of balls) {
-			if (ball.is_dragging) {
-				// event.clientX and clientY give the exact pixel coordinates of the mouse.
-				if (event.clientX >= ball_radius * 1.1 && event.clientX < w_width - ball_radius * 1.1) {
-					ball.x = event.clientX - ball_radius;
-					ball.x_center = event.clientX;
-				}
-				if (event.clientY >= ball_radius * 1.1 && event.clientY < w_height - ball_radius * 1.1) {
-					ball.y = event.clientY - ball_radius;
-					ball.y_center = event.clientY;
-				}
-				break;
-			}
-		}
-		balls = balls; // Trigger Svelte to update HTML
+	function drag(event) {
+		if (draggingId === null) return;
+		const ball = balls.find((b) => b.id === draggingId);
+		if (!ball) return;
+
+		const nx = clamp(event.clientX - BALL_RADIUS, 0, width - BALL_DIAMETER);
+		const ny = clamp(event.clientY - BALL_RADIUS, 0, height - BALL_DIAMETER);
+
+		// Smooth the pointer movement so the release throw feels natural.
+		dragVx = 0.6 * dragVx + 0.4 * (nx - ball.x);
+		dragVy = 0.6 * dragVy + 0.4 * (ny - ball.y);
+
+		ball.x = nx;
+		ball.y = ny;
+		ball.vx = 0;
+		ball.vy = 0;
 	}
 
-	function spawnBall(event) {
-		if (event.button == 0) {
-			curr_id += 1;
-			let new_ball = {
-				id: curr_id,
-				x: event.clientX - ball_radius,
-				y: event.clientY - ball_radius,
-				x_center: event.clientX,
-				y_center: event.clientY,
-				x_vel: 0,
-				y_vel: 0,
-				is_dragging: false
-			};
-			balls.push(new_ball);
-			balls = balls; // Trigger Svelte to update HTML
+	function release() {
+		if (draggingId === null) return;
+		const ball = balls.find((b) => b.id === draggingId);
+		if (ball) {
+			ball.vx = clamp(dragVx, -MAX_THROW, MAX_THROW);
+			ball.vy = clamp(dragVy, -MAX_THROW, MAX_THROW);
 		}
+		draggingId = null;
 	}
 
-	// Physics stuff
-
-	function checkBallCollisions() {
+	function resolveCollisions() {
 		for (let i = 0; i < balls.length; i++) {
 			for (let j = i + 1; j < balls.length; j++) {
-				let ballA = balls[i];
-				let ballB = balls[j];
+				const a = balls[i];
+				const b = balls[j];
 
-				let dist_btwn_centers = Math.sqrt(
-					(ballA.x_center - ballB.x_center) ** 2 + (ballA.y_center - ballB.y_center) ** 2
-				);
-				if (dist_btwn_centers <= ball_diameter) {
-					// Normal vector from A to B
-					let nx = (ballB.x_center - ballA.x_center) / dist_btwn_centers;
-					let ny = (ballB.y_center - ballA.y_center) / dist_btwn_centers;
+				// Difference of top-left corners equals difference of centers.
+				let dx = b.x - a.x;
+				let dy = b.y - a.y;
+				let dist = Math.hypot(dx, dy);
+				if (dist === 0) {
+					dist = 0.01;
+					dx = 0.01; // nudge perfectly-overlapping balls apart
+				}
+				if (dist >= BALL_DIAMETER) continue;
 
-					// Ensure correct ball positioning to prevent clumping
-					let overlap = ball_diameter - dist_btwn_centers;
-					if (overlap > 0) {
-						if (ballA.is_dragging) {
-							ballB.x += overlap * nx;
-							ballB.y += overlap * ny;
-							ballB.x_center += overlap * nx;
-							ballB.y_center += overlap * ny;
-						} else if (ballB.is_dragging) {
-							ballA.x -= overlap * nx;
-							ballA.y -= overlap * ny;
-							ballA.x_center -= overlap * nx;
-							ballA.y_center -= overlap * ny;
-						} else {
-							ballA.x -= (overlap / 2) * nx;
-							ballA.y -= (overlap / 2) * ny;
-							ballA.x_center -= (overlap / 2) * nx;
-							ballA.y_center -= (overlap / 2) * ny;
+				const nx = dx / dist;
+				const ny = dy / dist;
+				const overlap = BALL_DIAMETER - dist;
+				const aHeld = a.id === draggingId;
+				const bHeld = b.id === draggingId;
 
-							ballB.x += (overlap / 2) * nx;
-							ballB.y += (overlap / 2) * ny;
-							ballB.x_center += (overlap / 2) * nx;
-							ballB.y_center += (overlap / 2) * ny;
-						}
-					}
+				// Push the balls apart; a held ball stays put and shoves the other.
+				if (aHeld) {
+					b.x += overlap * nx;
+					b.y += overlap * ny;
+				} else if (bHeld) {
+					a.x -= overlap * nx;
+					a.y -= overlap * ny;
+				} else {
+					a.x -= (overlap / 2) * nx;
+					a.y -= (overlap / 2) * ny;
+					b.x += (overlap / 2) * nx;
+					b.y += (overlap / 2) * ny;
+				}
 
-					// Compute velocity of A relative to B
-					let d_vx = ballA.x_vel - ballB.x_vel;
-					let d_vy = ballA.y_vel - ballB.y_vel;
-
-					// Compute speed along normal vector
-					let speed = (nx * d_vx + ny * d_vy) * collision_damping_factor;
-
-					// If positive speed in the direction head-on the collision, update velocities accordingly
-					if (speed > 0) {
-						ballA.x_vel -= speed * nx;
-						ballA.y_vel -= speed * ny;
-						ballB.x_vel += speed * nx;
-						ballB.y_vel += speed * ny;
-					}
+				// Exchange velocity along the collision normal (only if closing in).
+				const speed = (nx * (a.vx - b.vx) + ny * (a.vy - b.vy)) * COLLISION_DAMPING;
+				if (speed > 0) {
+					a.vx -= speed * nx;
+					a.vy -= speed * ny;
+					b.vx += speed * nx;
+					b.vy += speed * ny;
 				}
 			}
 		}
-		balls = balls; // Trigger Svelte to update HTML
 	}
 
-	function physicsLoop() {
-		checkBallCollisions();
-		for (let ball of balls) {
-			if (!ball.is_dragging) {
-				// Update horizontal (x) coord, with bounds checking
-				ball.x += ball.x_vel;
-				if (ball.x < 0) {
-					ball.x = 0;
-					ball.x_vel *= -bounds_damping_factor;
-				} else if (ball.x > w_width - ball_diameter) {
-					ball.x = w_width - ball_diameter;
-					ball.x_vel *= -bounds_damping_factor;
-				}
-				// Update horizontal (x) center coord
-				ball.x_center = ball.x + ball_radius;
+	function step(dt) {
+		if (!width || !height) return; // wait until the window size is known
+		resolveCollisions();
 
-				// Update vertical (y) coord, with bounds checking
-				ball.y_vel += g;
-				ball.y += ball.y_vel;
-				ball.y_center = ball.y + ball_radius;
-				if (ball.y < 0) {
-					ball.y = 0;
-					ball.y_vel *= -bounds_damping_factor;
-				} else if (ball.y > w_height - ball_diameter) {
-					ball.y = w_height - ball_diameter;
-					ball.y_vel *= -bounds_damping_factor;
-				}
-				// Update vertical (y) center coord
-				ball.y_center = ball.y + ball_radius;
-			} else {
-				ball.x_vel = 0;
-				ball.y_vel = 0;
+		for (const ball of balls) {
+			if (ball.id === draggingId) continue; // held balls are moved by the pointer
+
+			ball.vy += GRAVITY * dt;
+			ball.x += ball.vx * dt;
+			ball.y += ball.vy * dt;
+
+			if (ball.x < 0) {
+				ball.x = 0;
+				ball.vx *= -BOUNDS_DAMPING;
+			} else if (ball.x > width - BALL_DIAMETER) {
+				ball.x = width - BALL_DIAMETER;
+				ball.vx *= -BOUNDS_DAMPING;
+			}
+
+			if (ball.y < 0) {
+				ball.y = 0;
+				ball.vy *= -BOUNDS_DAMPING;
+			} else if (ball.y > height - BALL_DIAMETER) {
+				ball.y = height - BALL_DIAMETER;
+				ball.vy *= -BOUNDS_DAMPING;
 			}
 		}
-		balls = balls; // Trigger Svelte to update HTML
-		requestAnimationFrame(physicsLoop);
 	}
 
-	onMount(() => {
-		physicsLoop();
+	// Drive the simulation. dt is measured in 60fps-frames and clamped so a
+	// backgrounded tab or slow frame can't fling balls across the screen.
+	$effect(() => {
+		let raf;
+		let last = 0;
+		const loop = (now) => {
+			const dt = last ? Math.min((now - last) / 16.6667, 3) : 1;
+			last = now;
+			step(dt);
+			raf = requestAnimationFrame(loop);
+		};
+		raf = requestAnimationFrame(loop);
+		return () => cancelAnimationFrame(raf);
 	});
 </script>
 
 <svelte:window
-	bind:innerWidth={w_width}
-	bind:innerHeight={w_height}
-	on:mousemove={onDrag}
-	on:mouseup={stopDrag}
+	bind:innerWidth={width}
+	bind:innerHeight={height}
+	onpointermove={drag}
+	onpointerup={release}
 />
 
-<div class="page-wrapper" on:mousedown|self={spawnBall} role="presentation">
+<div class="page-wrapper" onpointerdown={spawn} role="presentation">
 	<main>
 		<header>
 			<h1>{name}</h1>
@@ -219,13 +192,14 @@
 			</p>
 			<p>In the meantime, here's a ball to play around with.</p>
 			<ul>
-				<li>Click on any ball to drag it.</li>
-				<li>Click on any blank space to spawn more balls.</li>
+				<li>Grab and drag any ball, then let go to fling it.</li>
+				<li>Click any empty space to drop a new ball.</li>
 			</ul>
 		</header>
 
 		<nav>
-			{#each links as link}
+			{#each links as link (link.url)}
+				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- external link -->
 				<a href={link.url} target="_blank" rel="noreferrer">
 					{link.label} <span class="arrow">=></span>
 				</a>
@@ -233,14 +207,14 @@
 		</nav>
 	</main>
 
-	{#each balls as ball}
+	{#each balls as ball (ball.id)}
 		<div
 			class="ball"
-			draggable="false"
-			class:grabbing={ball.is_dragging}
-			style:left="{ball.x}px"
-			style:top="{ball.y}px"
-			on:mousedown|stopPropagation|preventDefault={(event) => startDrag(event, ball.id)}
+			class:grabbing={ball.id === draggingId}
+			style:transform="translate({ball.x}px, {ball.y}px){ball.id === draggingId
+				? ' scale(1.1)'
+				: ''}"
+			onpointerdown={(event) => grab(event, ball.id)}
 			role="presentation"
 		></div>
 	{/each}
@@ -281,18 +255,24 @@
 	}
 
 	.ball {
+		position: absolute;
+		top: 0;
+		left: 0;
 		width: 50px;
 		height: 50px;
 		background: #000;
 		border-radius: 50%;
-		position: absolute;
 		cursor: grab;
 		z-index: 10; /* Ensures the ball floats above everything else */
+		touch-action: none; /* Let us drag on touchscreens without scrolling */
+		user-select: none;
+		will-change: transform; /* Hint the browser to composite on the GPU */
 	}
 
 	.grabbing {
 		cursor: grabbing;
-		transform: scale(1.1);
+		/* The 1.1 scale is applied inline alongside translate() so the two compose
+		   correctly (scale must come after translate, not as a separate property). */
 		background: #444;
 	}
 </style>
