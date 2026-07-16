@@ -15,9 +15,15 @@
 </div>
 
 <div class="pdf-container">
-	<object data="/Lee-Oliver_Resume.pdf" type="application/pdf" width="100%" height="800px" aria-label="Oliver Lee's Resume PDF">
+	<object
+		data="/Lee-Oliver_Resume.pdf"
+		type="application/pdf"
+		width="100%"
+		height="800px"
+		aria-label="Oliver Lee's Resume PDF"
+	>
 		<p>
-			It appears your web browser doesn't support embedded PDFs. <a href="/resume.pdf"
+			It appears your web browser doesn't support embedded PDFs. <a href="/Lee-Oliver_Resume.pdf"
 				>Click here to view it.</a
 			>
 		</p>
@@ -50,7 +56,7 @@
 	}
 
 	.pdf-container {
-		margin: -2rem 10vw 4rem 10vw; 
+		margin: -2rem 10vw 4rem 10vw;
 		border: 1px solid #eaeaea;
 		border-radius: 8px;
 		overflow: hidden;

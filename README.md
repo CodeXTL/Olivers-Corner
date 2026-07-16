@@ -1,21 +1,30 @@
 # Oliver's Corner
+
 Welcome to the repository containing my personal website "Oliver's Corner"!
 
 ## Why Oliver's Corner?
+
 The complete sentimental meaning is "Oliver's corner of the internet", but I figured a shorter domain works much better
 for memorability and SEO.
 
+## Architecture
+
+For how the site is structured, how to add a project or category, and where the
+foundation is headed next, see **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)**.
+
 ## TODO:
-- [ ] Add `src/lib/` directory to improve modularity
-- [ ] Organized `static/` directory contents
-- [ ] Improve project page structure by removing hardcoded components
+
 - [ ] Update everything to Svelte 5 syntax
 - [ ] Add blogpost pages
 - [ ] Make navigation bar links more maintainable
 - [ ] Make homepage cleaner
+- [ ] Add project search & filtering (foundation in place — see ARCHITECTURE.md §6)
+- [x] Add `src/lib/` components to improve modularity (done 07/16/26)
+- [x] Organize `static/` directory contents (renamed per-project folders, done 07/16/26)
+- [x] Improve project page structure by removing hardcoded components (moved to Markdown/mdsvex, done 07/16/26)
 - [x] Make `+layout.svelte` cleaner (done 04/10/26)
-    - [x] Create `app.css` global stylesheet (done 04/10/26)
-    - [x] Create `Nav.svelte` component (done 04/10/26)
+  - [x] Create `app.css` global stylesheet (done 04/10/26)
+  - [x] Create `Nav.svelte` component (done 04/10/26)
 
 <!-- # sv
 
