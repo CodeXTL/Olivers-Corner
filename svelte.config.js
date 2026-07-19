@@ -4,16 +4,23 @@ import { mdsvex } from 'mdsvex';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// Treat .md files as components so project write-ups can live in Markdown.
+	// Register .md as a component extension so mdsvex-compiled Markdown can be
+	// imported and rendered exactly like a .svelte file. This is what makes
+	// content-as-Markdown work at all.
 	extensions: ['.svelte', '.md'],
 
 	preprocess: [vitePreprocess(), mdsvex({ extensions: ['.md'] })],
 
 	kit: {
-		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-		// If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
-		adapter: adapter()
+		adapter: adapter(),
+
+		alias: {
+			// Lets singleton pages import content without counting `../` hops:
+			//   import Goals from '$content/goals.md'
+			// Collections don't need this — they're discovered by the glob in
+			// $lib/content/index.js — but standalone .md pages do.
+			$content: 'src/content'
+		}
 	}
 };
 

@@ -9,4 +9,3 @@ In the short term, I am focused on building a strong technical foundation throug
 - Gain industry experience through internships in semiconductor or hardware-focused companies
 - Deepen my knowledge in VLSI design, signal processing, and embedded systems
 - Contribute to research projects involving microelectronics fabrication and cleanroom processes
-

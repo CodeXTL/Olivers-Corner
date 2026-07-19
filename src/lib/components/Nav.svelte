@@ -1,17 +1,27 @@
 <script>
 	// Site nav. Above the breakpoint it is a plain horizontal row; below it the
 	// links collapse behind a hamburger toggle. Breakpoint is kept in sync with
-	// MIN_BALL_WIDTH on the homepage.
-	const links = [
-		{ href: '/', label: 'Home' },
-		{ href: '/about', label: 'About Me' },
-		{ href: '/resume', label: 'Resume' },
-		{ href: '/goals', label: 'Career Goals' },
-		{ href: '/projects', label: 'Projects' },
-		{ href: '/minis', label: 'Minis' }
-	];
+	// MIN_BALL_WIDTH in $lib/physics/balls.js.
+	//
+	// The link list is NOT declared here — it comes from $lib/config.js, where
+	// the collection entries are derived from the content registry. That way a
+	// new content type appears in the nav automatically.
+	import { page } from '$app/state';
+	import { navLinks } from '$lib/config.js';
 
 	let open = $state(false);
+
+	/**
+	 * Whether a nav link points at the page currently being viewed. Section
+	 * links stay highlighted on their child pages (`/projects/mousecam` keeps
+	 * "Projects" marked), while "Home" only matches an exact `/`.
+	 *
+	 * @param {string} href
+	 */
+	function isCurrent(href) {
+		const path = page.url.pathname;
+		return href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`);
+	}
 </script>
 
 <svelte:window
@@ -36,41 +46,53 @@
 	</button>
 
 	<div id="nav-links" class="nav-links" class:open>
-		{#each links as link (link.href)}
-			<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -- internal site link -->
-			<a href={link.href} onclick={() => (open = false)}>{link.label}</a>
+		{#each navLinks as link (link.href)}
+			<a
+				href={link.href}
+				class:current={isCurrent(link.href)}
+				aria-current={isCurrent(link.href) ? 'page' : undefined}
+				onclick={() => (open = false)}
+			>
+				{link.label}
+			</a>
 		{/each}
 	</div>
 </nav>
 
 <style>
 	.main-nav {
-		/**Floats the nav bar to fix the homepage issue*/
+		/* Fixed so the homepage balls can pass underneath it. */
 		position: fixed;
 		top: 0;
 		left: 0;
 		width: 100%;
-		box-sizing: border-box;
-		z-index: 100;
-		/* It's yee high and above everything */
+		z-index: var(--z-nav);
 
-		padding: 1.5rem 10vw;
-		background-color: #eee;
+		padding: var(--space-6) var(--page-gutter);
+		background-color: var(--color-surface-bar);
 	}
 
 	.nav-links {
 		display: flex;
-		gap: 1.5rem;
+		gap: var(--space-6);
 	}
 
 	.main-nav a {
 		text-decoration: none;
-		color: #333;
-		font-weight: 600;
+		color: var(--color-text);
+		font-weight: var(--weight-semibold);
 	}
 
 	.main-nav a:hover {
-		color: #000;
+		color: var(--color-text-strong);
+	}
+
+	/* Marks the section you're currently in. Paired with aria-current="page",
+	   so it reads correctly to screen readers as well as visually. */
+	.main-nav a.current {
+		color: var(--color-text-strong);
+		text-decoration: underline;
+		text-underline-offset: 0.3em;
 	}
 
 	/* Hidden on wide screens; the links speak for themselves there. */
@@ -78,10 +100,10 @@
 		display: none;
 		background: none;
 		border: none;
-		padding: 0.25rem;
+		padding: var(--space-1);
 		margin: 0;
 		cursor: pointer;
-		color: #333;
+		color: var(--color-text);
 	}
 
 	.bars {
@@ -95,8 +117,8 @@
 		background-color: currentColor;
 		border-radius: 2px;
 		transition:
-			transform 0.2s ease,
-			opacity 0.2s ease;
+			transform var(--duration-base) var(--ease),
+			opacity var(--duration-base) var(--ease);
 	}
 
 	.bars span + span {
@@ -118,7 +140,7 @@
 
 	@media (max-width: 767px) {
 		.main-nav {
-			padding: 1rem 6vw;
+			padding: var(--space-4) var(--page-gutter);
 		}
 
 		.menu-toggle {
@@ -128,8 +150,8 @@
 		.nav-links {
 			display: none;
 			flex-direction: column;
-			gap: 1rem;
-			padding: 1rem 0 0.25rem;
+			gap: var(--space-4);
+			padding: var(--space-4) 0 var(--space-1);
 		}
 
 		.nav-links.open {

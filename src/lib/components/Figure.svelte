@@ -15,18 +15,18 @@
 
 <style>
 	.figure {
-		margin: 1.5rem 0;
+		margin: var(--space-6) 0;
 	}
 
 	.figure img {
 		width: 100%;
-		border-radius: 10px;
+		border-radius: var(--radius-lg);
 		display: block;
 	}
 
 	figcaption {
-		margin-top: 0.5rem;
-		line-height: 1.5;
-		color: #333;
+		margin-top: var(--space-2);
+		line-height: var(--leading-normal);
+		color: var(--color-text);
 	}
 </style>

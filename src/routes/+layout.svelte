@@ -1,14 +1,19 @@
-<script lang="ts">
+<script>
+	// The app shell, wrapped around every page: nav on top, page in the middle,
+	// footer pinned to the bottom.
 	import Nav from '$lib/components/Nav.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import '../app.css';
+
 	let { children } = $props();
 </script>
 
 <Nav />
+
 <div class="site-body">
 	{@render children()}
 </div>
+
 <Footer />
 
 <style>

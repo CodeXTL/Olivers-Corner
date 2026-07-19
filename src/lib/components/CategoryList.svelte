@@ -7,7 +7,7 @@
 
 {#if categories.length}
 	<ul class="categories">
-		{#each categories as category}
+		{#each categories as category (category)}
 			<li class="category">{category}</li>
 		{/each}
 	</ul>
@@ -20,18 +20,18 @@
 		margin: 0;
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem;
+		gap: var(--space-2);
 	}
 
 	.category {
 		margin: 0;
-		font-size: 0.8rem;
-		font-weight: 600;
+		font-size: var(--text-xs);
+		font-weight: var(--weight-semibold);
 		line-height: 1;
-		color: #444;
-		background-color: #f0f0f0;
-		border: 1px solid #e2e2e2;
-		border-radius: 999px;
+		color: var(--color-text);
+		background-color: var(--color-surface-muted);
+		border: 1px solid var(--color-border-strong);
+		border-radius: var(--radius-pill);
 		padding: 0.35rem 0.7rem;
 		white-space: nowrap;
 	}

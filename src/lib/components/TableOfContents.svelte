@@ -5,6 +5,8 @@
 
 	// Height of the fixed nav bar, plus a little breathing room. Used both for
 	// scroll-into-view offsets and for deciding which heading is "current".
+	// Mirrors the --nav-height token; CSS variables aren't readable from JS
+	// without a getComputedStyle round-trip, so the value is repeated here.
 	const SCROLL_OFFSET = 96;
 
 	let headings = $state([]);
@@ -108,17 +110,17 @@
 		max-height: calc(100vh - 8rem);
 		overflow-y: auto;
 		font-size: 0.9rem;
-		border-left: 1px solid #eaeaea;
-		padding-left: 1rem;
+		border-left: 1px solid var(--color-border);
+		padding-left: var(--space-4);
 	}
 
 	.toc-title {
-		font-size: 0.75rem;
-		font-weight: 600;
+		font-size: var(--text-xs);
+		font-weight: var(--weight-semibold);
 		text-transform: uppercase;
-		letter-spacing: 0.08em;
-		color: #888;
-		margin: 0 0 0.75rem;
+		letter-spacing: var(--tracking-wide);
+		color: var(--color-text-subtle);
+		margin: 0 0 var(--space-3);
 	}
 
 	ul {
@@ -139,24 +141,24 @@
 	a {
 		display: block;
 		padding: 0.35rem 0;
-		color: #777;
+		color: var(--color-text-subtle);
 		text-decoration: none;
-		line-height: 1.35;
+		line-height: var(--leading-tight);
 		border-left: 2px solid transparent;
-		margin-left: -1rem;
-		padding-left: 1rem;
+		margin-left: calc(var(--space-4) * -1);
+		padding-left: var(--space-4);
 		transition:
-			color 0.15s ease,
-			border-color 0.15s ease;
+			color var(--duration-fast) var(--ease),
+			border-color var(--duration-fast) var(--ease);
 	}
 
 	a:hover {
-		color: #111;
+		color: var(--color-text-heading);
 	}
 
 	a.active {
-		color: #111;
-		font-weight: 600;
-		border-left-color: #111;
+		color: var(--color-text-heading);
+		font-weight: var(--weight-semibold);
+		border-left-color: var(--color-text-heading);
 	}
 </style>
