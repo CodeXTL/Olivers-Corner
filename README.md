@@ -8,10 +8,9 @@ on Vercel.
 
 ## Why "Oliver's Corner"?
 
-The full sentimental meaning is "Oliver's corner of the internet", but a shorter
-domain works much better for memorability and SEO.
+The full sentimental meaning is "Oliver's corner of the internet", but a shorter domain works much better for memorability and SEO. Updates happen (hopefully) on a weekly basis and will be push promptly at noon on Sundays into the corresponding branch; whether it will be merged is a different story.
 
----
+<!-- ---
 
 ## Quick start
 
@@ -28,9 +27,9 @@ npm run dev
 | `npm run format`  | Apply Prettier                         |
 | `npm run lint`    | Prettier check + ESLint                |
 
----
+--- -->
 
-## Documentation
+<!-- ## Documentation
 
 | I want to…                                  | Read                                             |
 | ------------------------------------------- | ------------------------------------------------ |
@@ -41,7 +40,7 @@ npm run dev
 `src/content/projects/` or `src/content/minis/`. Its card, page, URL, table of
 contents, and social preview all generate themselves.
 
----
+--- -->
 
 ## Layout
 
@@ -60,19 +59,10 @@ static/            # images and video, one folder per write-up
 docs/              # architecture + content guides
 ```
 
----
-
-## Setup note
-
-`site.url` in [`src/lib/config.js`](src/lib/config.js) is a **placeholder**. Set
-it to the real production domain so Open Graph link previews resolve correctly.
-Nothing else depends on it.
-
----
 
 ## TODO
-
-- [ ] Set the real production domain in `src/lib/config.js`
+- [ ] Fix TODO to make it more actionable.
+- [x] Set the real production domain in `src/lib/config.js`
 - [ ] Add blogpost pages ([how to add a collection](docs/ARCHITECTURE.md#add-a-whole-new-collection-eg-a-blog))
 - [ ] Add project search & filtering (foundation in place — see ARCHITECTURE.md §10)
 - [ ] Add a sitemap and CI
