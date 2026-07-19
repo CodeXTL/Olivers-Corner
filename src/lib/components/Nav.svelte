@@ -7,7 +7,8 @@
 		{ href: '/about', label: 'About Me' },
 		{ href: '/resume', label: 'Resume' },
 		{ href: '/goals', label: 'Career Goals' },
-		{ href: '/projects', label: 'Projects' }
+		{ href: '/projects', label: 'Projects' },
+		{ href: '/minis', label: 'Minis' }
 	];
 
 	let open = $state(false);

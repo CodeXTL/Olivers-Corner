@@ -41,12 +41,16 @@ ordering, the category chips — is generated automatically from those files.
 | Path                        | What it is                                                                                                                |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `src/content/projects/*.md` | **One file per project.** Frontmatter (metadata) at the top, the write-up in Markdown below. This is the source of truth. |
+| `src/content/minis/*.md`    | **One file per mini project.** Identical format to a project — see §9.                                                    |
 
 ### Library — the engine (rarely needs changing)
 
 | Path                                      | What it is                                                                                                                           |
 | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/lib/content.js`                      | Shared frontmatter plumbing: `collect()` (glob results → sorted metadata) and `deriveCategories()`. Used by both loaders below.      |
 | `src/lib/projects.js`                     | Reads every `*.md` frontmatter via Vite's `import.meta.glob`, exports the sorted `projects` array and the derived `categories` list. |
+| `src/lib/minis.js`                        | The same, for `src/content/minis`. Exports `minis` and `miniCategories`.                                                            |
+| `src/lib/components/MiniCard.svelte`      | One card in the `/minis` grid: fixed height, image pinned to the top 40%, then title + completion date + overview.                  |
 | `src/lib/components/ProjectCard.svelte`   | One entry on the `/projects` listing (thumbnail + title + overview + category chips).                                                |
 | `src/lib/components/ProjectLayout.svelte` | The shared "chrome" wrapped around every write-up: back-link, title, category chips, and the CSS that styles the Markdown prose.     |
 | `src/lib/components/Figure.svelte`        | A captioned image. Renders the `Figure N.` label.                                                                                    |
@@ -319,3 +323,47 @@ All at the top of the `<script>`, so you can adjust feel without touching logic:
   accessibility.
 - Spatial partitioning (a grid) if you ever raise `MAX_BALLS` a lot — turns the
   O(n²) collision check into roughly O(n).
+
+---
+
+## 9. Minis (`/minis`)
+
+Mini projects are the **same content pipeline as projects**, pointed at a
+different folder. A mini's write-up page is byte-for-byte the same chrome as a
+project's — it reuses `ProjectLayout`, so the prose styling, category chips, and
+table of contents all come along for free. Only the listing differs.
+
+```
+   src/content/minis/*.md               src/content/projects/*.md
+            │                                     │
+            ▼                                     ▼
+     src/lib/minis.js  ──┐            ┌──  src/lib/projects.js
+                         ├─ both use ─┤
+                         │ content.js │
+     routes/minis/       └────────────┘     routes/projects/
+     (3-column card grid)                   (stacked wide cards)
+```
+
+**Adding a mini = adding one `.md` file** to `src/content/minis/`, exactly as in
+§5. The frontmatter schema in §4 applies unchanged.
+
+### How the listing differs
+
+`/projects` is a vertical stack of wide cards. `/minis` is a **three-column grid
+of fixed-size cards**, which is what keeps a page of small entries scannable:
+
+- Every card is a fixed height, so the grid stays even no matter how long a
+  title or overview runs. Long titles clamp to 2 lines, overviews to 4.
+- The image occupies the **top 40%** of the card (`flex: 0 0 40%`), with the
+  remaining 60% holding the title, completion date, and overview.
+- `thumbnail` is optional here. A mini without one renders a neutral striped
+  placeholder in the same 40% slot, so the grid never goes ragged.
+- The whole card is one link, rather than the three separate links a
+  `ProjectCard` has.
+- Columns step 3 → 2 → 1 at 1000px and 640px rather than squashing.
+
+### Shared back-link
+
+`ProjectLayout` takes optional `backHref` / `backLabel` props (defaulting to
+`/projects` and "Back to Projects"). The minis route passes `/minis` and "Back
+to Minis". That is the only difference between the two write-up routes.

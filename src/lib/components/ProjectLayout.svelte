@@ -4,7 +4,9 @@
 	import CategoryList from './CategoryList.svelte';
 	import TableOfContents from './TableOfContents.svelte';
 
-	let { meta, children } = $props();
+	// backHref/backLabel let the same chrome serve both /projects and /minis
+	// write-ups, which are otherwise identical.
+	let { meta, children, backHref = '/projects', backLabel = 'Back to Projects' } = $props();
 
 	// Handed to the TOC so it can read the headings the Markdown rendered.
 	let post = $state();
@@ -12,7 +14,7 @@
 
 <div class="project-article">
 	<main>
-		<a class="back-link" href="/projects">&larr; Back to Projects</a>
+		<a class="back-link" href={backHref}>&larr; {backLabel}</a>
 
 		<h1>{meta.title}</h1>
 
