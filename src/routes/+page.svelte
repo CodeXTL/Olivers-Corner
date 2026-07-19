@@ -14,11 +14,30 @@
 	const MAX_BALLS = 60; // cap so collisions/DOM stay cheap
 	const MAX_THROW = 40; // clamp on fling speed when releasing a ball
 
+	// Below this the ball pit is turned off: there isn't room for it to be fun,
+	// and dragging fights with touch scrolling. Keep in sync with Nav.svelte.
+	const MIN_BALL_WIDTH = 768;
+
 	const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
 	// --- Reactive state (Svelte 5 runes) ---
+	// Measured from .ball-pit rather than window.innerWidth/innerHeight, which
+	// include the scrollbar and so let balls sit outside the visible area.
 	let width = $state(0);
 	let height = $state(0);
+
+	// Starts false so server-rendered HTML ships no balls; the effect below
+	// turns it on once we know the viewport is wide enough.
+	let ballsEnabled = $state(false);
+
+	$effect(() => {
+		const query = window.matchMedia(`(min-width: ${MIN_BALL_WIDTH}px)`);
+		const sync = () => (ballsEnabled = query.matches);
+
+		sync();
+		query.addEventListener('change', sync);
+		return () => query.removeEventListener('change', sync);
+	});
 
 	// A ball only stores position + velocity; its center is always x/y + radius.
 	let balls = $state([{ id: 0, x: 100 - BALL_RADIUS, y: 100 - BALL_RADIUS, vx: 0, vy: 0 }]);
@@ -31,6 +50,7 @@
 	let dragVy = 0;
 
 	function spawn(event) {
+		if (!ballsEnabled) return;
 		// Only when clicking the background itself, not the text or a ball.
 		if (event.target !== event.currentTarget) return;
 		balls.push({
@@ -128,7 +148,7 @@
 	}
 
 	function step(dt) {
-		if (!width || !height) return; // wait until the window size is known
+		if (!width || !height) return; // wait until the stage size is known
 		resolveCollisions();
 
 		for (const ball of balls) {
@@ -159,6 +179,8 @@
 	// Drive the simulation. dt is measured in 60fps-frames and clamped so a
 	// backgrounded tab or slow frame can't fling balls across the screen.
 	$effect(() => {
+		if (!ballsEnabled) return; // no simulation to run on narrow screens
+
 		let raf;
 		let last = 0;
 		const loop = (now) => {
@@ -172,12 +194,7 @@
 	});
 </script>
 
-<svelte:window
-	bind:innerWidth={width}
-	bind:innerHeight={height}
-	onpointermove={drag}
-	onpointerup={release}
-/>
+<svelte:window onpointermove={drag} onpointerup={release} />
 
 <div class="page-wrapper" onpointerdown={spawn} role="presentation">
 	<main>
@@ -190,11 +207,19 @@
 				as a portfolio of my academic journey, showcasing my technical projects, career aspirations,
 				and personal growth.
 			</p>
-			<p>In the meantime, here's a ball to play around with.</p>
-			<ul>
-				<li>Grab and drag any ball, then let go to fling it.</li>
-				<li>Click any empty space to drop a new ball.</li>
-			</ul>
+			{#if ballsEnabled}
+				<p>In the meantime, here's a ball to play around with.</p>
+				<ul>
+					<li>Grab and drag any ball, then let go to fling it.</li>
+					<li>Click any empty space to drop a new ball.</li>
+					<li>Ball dropping only works on wider screens, so it's off on phones.</li>
+				</ul>
+			{:else}
+				<p>
+					In the meantime, there's a ball pit to play around with here — but ball dropping only
+					works on wider screens, so try this page on a desktop.
+				</p>
+			{/if}
 		</header>
 
 		<nav>
@@ -207,17 +232,24 @@
 		</nav>
 	</main>
 
-	{#each balls as ball (ball.id)}
-		<div
-			class="ball"
-			class:grabbing={ball.id === draggingId}
-			style:transform="translate({ball.x}px, {ball.y}px){ball.id === draggingId
-				? ' scale(1.1)'
-				: ''}"
-			onpointerdown={(event) => grab(event, ball.id)}
-			role="presentation"
-		></div>
-	{/each}
+	<!-- Fixed and clipped, so balls can never grow the page's scrollable area.
+	     Being viewport-anchored also makes ball coordinates line up with the
+	     pointer's clientX/clientY no matter how far the page is scrolled. -->
+	<div class="ball-pit" bind:clientWidth={width} bind:clientHeight={height} aria-hidden="true">
+		{#if ballsEnabled}
+			{#each balls as ball (ball.id)}
+				<div
+					class="ball"
+					class:grabbing={ball.id === draggingId}
+					style:transform="translate({ball.x}px, {ball.y}px){ball.id === draggingId
+						? ' scale(1.1)'
+						: ''}"
+					onpointerdown={(event) => grab(event, ball.id)}
+					role="presentation"
+				></div>
+			{/each}
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -254,6 +286,16 @@
 		transform: translateX(0);
 	}
 
+	/* The stage the balls live on. Fixed + hidden overflow means it never
+	   contributes to document height/width, so no stray scrollbars. */
+	.ball-pit {
+		position: fixed;
+		inset: 0;
+		overflow: hidden;
+		z-index: 10; /* Ensures balls float above everything else */
+		pointer-events: none; /* Never swallow clicks meant for the page */
+	}
+
 	.ball {
 		position: absolute;
 		top: 0;
@@ -263,7 +305,7 @@
 		background: #000;
 		border-radius: 50%;
 		cursor: grab;
-		z-index: 10; /* Ensures the ball floats above everything else */
+		pointer-events: auto; /* ...but the balls themselves stay grabbable */
 		touch-action: none; /* Let us drag on touchscreens without scrolling */
 		user-select: none;
 		will-change: transform; /* Hint the browser to composite on the GPU */
