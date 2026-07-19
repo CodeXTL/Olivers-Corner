@@ -11,8 +11,8 @@
 	</a>
 
 	<div class="project-info">
-		<h2>{project.title}</h2>
-		<p><strong>Completion Date:</strong> {project.completion}</p>
+		<h2><a href="/projects/{project.slug}">{project.title}</a></h2>
+		<p class="completion">{project.completion}</p>
 		<p>
 			<strong>Overview:</strong>
 			{project.overview}
@@ -56,6 +56,32 @@
 		margin-bottom: 0.5rem;
 		border-bottom: none;
 		padding-bottom: 0;
+	}
+
+	/* Supporting metadata, not body copy — steps down from the global `p` size. */
+	.completion {
+		font-size: 0.85rem;
+		color: #888;
+		margin-top: -0.25rem;
+		margin-bottom: 0.75rem;
+	}
+
+	/* The title links through to the project, but should read as a heading rather
+	   than as a link. Hover is the only affordance. */
+	h2 a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	h2 a:hover {
+		color: #000;
+		text-decoration: underline;
+	}
+
+	h2 a:focus-visible {
+		outline: 2px solid #111;
+		outline-offset: 3px;
+		border-radius: 2px;
 	}
 
 	@media (max-width: 600px) {

@@ -3,7 +3,7 @@ title: 'PixShift: A DIY Camera'
 completion: 'November 2025'
 created: '2025-12-15T09:00:00'
 updated: '2026-07-16T01:30:00'
-categories: ['Embedded Systems', 'Hardware', 'PCB Design', 'CAD & 3D Printing', 'Optics']
+categories: ['Embedded Systems', 'PCB Design', 'CAD & 3D Printing', 'Optics']
 thumbnail: '/pixshift/Thumbnail.jpg'
 overview: 'Creating a portable camera with a custom 8 by 8 pixel camera sensor that is mounted on a linear actuator so that images at a higher resolution (16 by 8 pixels) can be obtained.'
 ---

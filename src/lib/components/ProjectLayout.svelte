@@ -2,8 +2,12 @@
 	// Shared chrome for every project write-up. Renders the back-link and title,
 	// and styles the Markdown-generated prose (headings, paragraphs, lists, code).
 	import CategoryList from './CategoryList.svelte';
+	import TableOfContents from './TableOfContents.svelte';
 
 	let { meta, children } = $props();
+
+	// Handed to the TOC so it can read the headings the Markdown rendered.
+	let post = $state();
 </script>
 
 <div class="project-article">
@@ -16,17 +20,40 @@
 			<CategoryList categories={meta.categories} />
 		</div>
 
-		<div class="post">
+		<div class="post" bind:this={post}>
 			{@render children()}
 		</div>
 	</main>
+
+	<aside class="toc-column">
+		<TableOfContents container={post} />
+	</aside>
 </div>
 
 <style>
+	/* Article stays centred on its own; the TOC hangs off to the right when there
+	   is room for it, and drops out entirely on narrow screens. */
 	.project-article {
-		max-width: 900px;
+		display: grid;
+		grid-template-columns: minmax(0, 900px);
+		justify-content: center;
 		margin: 0 auto;
 		padding: 2rem;
+	}
+
+	.toc-column {
+		display: none;
+	}
+
+	@media (min-width: 1200px) {
+		.project-article {
+			grid-template-columns: minmax(0, 900px) 15rem;
+			gap: 3rem;
+		}
+
+		.toc-column {
+			display: block;
+		}
 	}
 
 	.meta-categories {

@@ -3,7 +3,7 @@ title: 'MouseCam: Imaging from an Optical Mouse Sensor'
 completion: 'April 2026'
 created: '2026-04-30T10:00:00'
 updated: '2026-07-16T01:30:00'
-categories: ['Embedded Systems', 'Hardware', 'Networking', 'Optics']
+categories: ['Embedded Systems', 'Networking', 'Optics']
 thumbnail: '/mousecam/Thumbnail.jpg'
 overview: 'MouseCam is a project with the goal of extracting live image data from the optical sensor inside a 20-year-old Logitech mouse and streaming it wirelessly to a PC for display.'
 ---
@@ -149,7 +149,7 @@ n={1}
 caption={`Sped up live pixel stream from the ADNS-2051, showing the sensor's view change as the mouse is moved across the word "multiplexer."`}
 />
 
-## ECE Skills Gained
+<!-- ## ECE Skills Gained
 
 - **Datasheet reading.** The ADNS-2051 datasheet is 40 pages long and full of timing diagrams, register maps, and cryptic sections about serial port synchronization. Becoming fluent in reading datasheets, especially knowing which parts to skim and which parts to read line-by-line, was a skill I gained throughout this project.
 - **Bit-banged serial protocols.** Before this project, I had only used standard hardware peripherals like SPI and I2C. Implementing a custom protocol from scratch, with microsecond-level timing requirements, gave me a much deeper understanding of serial protocols.
@@ -157,8 +157,10 @@ caption={`Sped up live pixel stream from the ADNS-2051, showing the sensor's vie
 - **Reverse engineering hardware.** Tracing PCB signals with a multimeter, identifying the role of each component on the mouse PCB, and deciding what to keep and what to remove was its own kind of engineering puzzle.
 - **Soldering and desoldering skills.** Desoldering fine-pitch pins on a working PCB without damaging surrounding components is not a new skill for me, but this project did give me some much needed practice.
 - **WiFi and TCP networking on embedded systems.** Getting the ESP32 to serve frames over TCP, handling disconnects, and debugging WiFi authentication issues taught me more about the OSI stack than any textbook ever did.
-- **Real-time image pipelines.** Building the end-to-end flow from sensor bits through serialization, network transport, parsing, and OpenCV display gave me experience with pipelines where latency matters.
+- **Real-time image pipelines.** Building the end-to-end flow from sensor bits through serialization, network transport, parsing, and OpenCV display gave me experience with pipelines where latency matters. -->
 
 ## Final Thoughts
 
-This project pushed me further out of my comfort zone. Going in, I thought the main challenge would be the optics, but in practice the real challenges were reading the dense 40-page datasheet in depth, reverse engineering the mouse PCB with no schematics available, bit-banging a custom serial protocol, and managing power and sync issues across multiple interacting chips. The satisfaction of getting the correct value back from a register after hours of debugging is a feeling I want to chase further, and this project has made me more interested in the embedded and hardware-close-to-silicon side of ECE. If I continue it, the next steps would be adding a proper lens for real imaging, designing a custom PCB that eliminates the hacky wiring, and possibly implementing the "hand-held scanner" idea where the sensor's own motion tracking data is used to stitch frames into a larger image.
+This was a quick project for me to explore whether it is feasible to adopt the light sensors of an old optical mouse to replicate a decent digital camera. My conclusion, for now, is that it is possible but not really worth my time. Maybe I will pick up this project again in the future.
+
+<!-- This project pushed me further out of my comfort zone. Going in, I thought the main challenge would be the optics, but in practice the real challenges were reading the dense 40-page datasheet in depth, reverse engineering the mouse PCB with no schematics available, bit-banging a custom serial protocol, and managing power and sync issues across multiple interacting chips. The satisfaction of getting the correct value back from a register after hours of debugging is a feeling I want to chase further, and this project has made me more interested in the embedded and hardware-close-to-silicon side of ECE. If I continue it, the next steps would be adding a proper lens for real imaging, designing a custom PCB that eliminates the hacky wiring, and possibly implementing the "hand-held scanner" idea where the sensor's own motion tracking data is used to stitch frames into a larger image. -->

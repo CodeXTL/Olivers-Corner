@@ -8,7 +8,7 @@
 
 		<p>You can view my resume below, or download a PDF version for your convenience.</p>
 
-		<a href="/Lee-Oliver_Resume.pdf" download="Oliver_Lee_Resume.pdf" class="download-btn"
+		<a href="/Lee_Oliver_Resume_Jul26.pdf" download="Oliver_Lee_Resume.pdf" class="download-btn"
 			>Download PDF Resume</a
 		>
 	</main>
@@ -16,15 +16,15 @@
 
 <div class="pdf-container">
 	<object
-		data="/Lee-Oliver_Resume.pdf"
+		data="/Lee_Oliver_Resume_Jul26.pdf"
 		type="application/pdf"
 		width="100%"
 		height="800px"
 		aria-label="Oliver Lee's Resume PDF"
 	>
 		<p>
-			It appears your web browser doesn't support embedded PDFs. <a href="/Lee-Oliver_Resume.pdf"
-				>Click here to view it.</a
+			It appears your web browser doesn't support embedded PDFs. <a
+				href="/Lee_Oliver_Resume_Jul26.pdf">Click here to view it.</a
 			>
 		</p>
 	</object>
