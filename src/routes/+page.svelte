@@ -49,6 +49,23 @@
 	let dragVx = 0;
 	let dragVy = 0;
 
+	// The footer's top edge is the ground. It lives in the normal document flow
+	// while the ball pit is fixed to the viewport, so its height in pit
+	// coordinates changes as the page scrolls — hence re-measuring per frame.
+	let footerEl = null;
+	let floorY = 0;
+
+	$effect(() => {
+		footerEl = document.querySelector('.site-footer');
+	});
+
+	function groundLine() {
+		if (!footerEl) return height;
+		// While the footer is still below the fold, fall back to the bottom of
+		// the viewport so balls never drop out of sight.
+		return clamp(footerEl.getBoundingClientRect().top, BALL_DIAMETER, height);
+	}
+
 	function spawn(event) {
 		if (!ballsEnabled) return;
 		// Only when clicking the background itself, not the text or a ball.
@@ -77,7 +94,7 @@
 		if (!ball) return;
 
 		const nx = clamp(event.clientX - BALL_RADIUS, 0, width - BALL_DIAMETER);
-		const ny = clamp(event.clientY - BALL_RADIUS, 0, height - BALL_DIAMETER);
+		const ny = clamp(event.clientY - BALL_RADIUS, 0, floorY - BALL_DIAMETER);
 
 		// Smooth the pointer movement so the release throw feels natural.
 		dragVx = 0.6 * dragVx + 0.4 * (nx - ball.x);
@@ -149,6 +166,7 @@
 
 	function step(dt) {
 		if (!width || !height) return; // wait until the stage size is known
+		floorY = groundLine();
 		resolveCollisions();
 
 		for (const ball of balls) {
@@ -169,8 +187,9 @@
 			if (ball.y < 0) {
 				ball.y = 0;
 				ball.vy *= -BOUNDS_DAMPING;
-			} else if (ball.y > height - BALL_DIAMETER) {
-				ball.y = height - BALL_DIAMETER;
+			} else if (ball.y > floorY - BALL_DIAMETER) {
+				// Rest on top of the footer rather than the bottom of the window.
+				ball.y = floorY - BALL_DIAMETER;
 				ball.vy *= -BOUNDS_DAMPING;
 			}
 		}
