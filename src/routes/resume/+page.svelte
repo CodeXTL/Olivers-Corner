@@ -1,25 +1,39 @@
-<svelte:head>
-	<title>Resume | Oliver's Corner</title>
-</svelte:head>
+<script>
+	import Seo from '$lib/components/Seo.svelte';
 
-<div class="page-wrapper">
+	// The PDF is referenced twice (viewer + download), so its path lives in one
+	// constant — swapping in a newer resume is a single edit.
+	const RESUME_PDF = '/Lee_Oliver_Resume_Jul26.pdf';
+</script>
+
+<Seo
+	title="Resume"
+	description="Oliver Lee's resume — Computer Science graduate pursuing a second Bachelor's in Electrical Engineering at Georgia Tech."
+/>
+
+<div class="page">
 	<main>
 		<h1>Resume</h1>
 
 		<p>You can view my resume below, or download a PDF version for your convenience.</p>
 
-		<a href="/Lee-Oliver_Resume.pdf" download="Oliver_Lee_Resume.pdf" class="download-btn"
-			>Download PDF Resume</a
-		>
+		<a href={RESUME_PDF} download="Oliver_Lee_Resume.pdf" class="download-btn">
+			Download PDF Resume
+		</a>
 	</main>
 </div>
 
 <div class="pdf-container">
-	<object data="/Lee-Oliver_Resume.pdf" type="application/pdf" width="100%" height="800px" aria-label="Oliver Lee's Resume PDF">
+	<object
+		data={RESUME_PDF}
+		type="application/pdf"
+		width="100%"
+		height="800px"
+		aria-label="Oliver Lee's Resume PDF"
+	>
 		<p>
-			It appears your web browser doesn't support embedded PDFs. <a href="/resume.pdf"
-				>Click here to view it.</a
-			>
+			It appears your web browser doesn't support embedded PDFs.
+			<a href={RESUME_PDF}>Click here to view it.</a>
 		</p>
 	</object>
 </div>
@@ -27,22 +41,22 @@
 <style>
 	.download-btn {
 		display: inline-block;
-		padding: 0.6rem 1.2rem;
-		background-color: #111;
-		color: #fff;
+		padding: 0.6rem var(--space-5);
+		background-color: var(--color-text-heading);
+		color: var(--color-surface);
 		text-decoration: none;
-		border-radius: 4px;
-		font-weight: 600;
+		border-radius: var(--radius-sm);
+		font-weight: var(--weight-semibold);
 		font-size: 0.9rem;
-		margin-bottom: 2rem;
+		margin-bottom: var(--space-8);
 		transition:
-			background-color 0.2s ease,
-			transform 0.1s ease;
+			background-color var(--duration-base) var(--ease),
+			transform 0.1s var(--ease);
 	}
 
 	.download-btn:hover {
-		background-color: #333;
-		color: #fff;
+		background-color: var(--color-text);
+		color: var(--color-surface);
 	}
 
 	.download-btn:active {
@@ -50,10 +64,10 @@
 	}
 
 	.pdf-container {
-		margin: -2rem 10vw 4rem 10vw; 
-		border: 1px solid #eaeaea;
-		border-radius: 8px;
+		margin: calc(var(--space-8) * -1) var(--page-gutter) var(--space-16);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
 		overflow: hidden;
-		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+		box-shadow: var(--shadow-sm);
 	}
 </style>

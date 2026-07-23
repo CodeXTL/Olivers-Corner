@@ -1,0 +1,146 @@
+/* =============================================================================
+   Design tokens — the single source of truth for colour, spacing, type, and
+   elevation.
+
+   Every component styles itself from these variables rather than from literal
+   values, so a site-wide restyle is an edit to this one file. If you find
+   yourself typing a raw hex code or a magic pixel value in a component, the
+   right move is almost always to add a token here instead.
+
+   Naming: tokens are named for their ROLE (--color-surface), not their value
+   (--color-white). That is what lets the palette change without every name
+   becoming a lie.
+   ============================================================================= */
+
+:root {
+	/* ---------------------------------------------------------------------
+	   Colour — surfaces
+	   Ordered back-to-front: the page sits furthest back, cards sit on top.
+	   --------------------------------------------------------------------- */
+	--color-canvas: #fafafa; /* page background */
+	--color-surface: #fff; /* cards, raised panels */
+	--color-surface-muted: #f0f0f0; /* inline code, chips, image placeholders */
+	--color-surface-bar: #eee; /* nav + footer, which bookend the page */
+
+	/* ---------------------------------------------------------------------
+	   Colour — text
+	   A four-step ramp from loudest to quietest. Body copy is --color-text;
+	   anything supporting (dates, captions, TOC) steps down from there.
+	   --------------------------------------------------------------------- */
+	--color-text-strong: #000; /* hover/active emphasis only */
+	--color-text-heading: #111; /* headings, primary UI text */
+	--color-text: #333; /* body copy */
+	--color-text-muted: #666; /* secondary metadata */
+	--color-text-subtle: #888; /* dates, captions, inactive TOC entries */
+
+	/* ---------------------------------------------------------------------
+	   Colour — borders & accents
+	   --------------------------------------------------------------------- */
+	--color-border: #eaeaea; /* hairlines under headings, around images */
+	--color-border-strong: #e2e2e2; /* chip outlines */
+	--color-accent: #ff0055; /* the about-page paintbrush */
+
+	/* Focus ring. Defined once so keyboard navigation looks identical
+	   everywhere — see the shared :focus-visible rule in app.css. */
+	--focus-ring-color: var(--color-text-heading);
+	--focus-ring-width: 2px;
+	--focus-ring-offset: 3px;
+
+	/* ---------------------------------------------------------------------
+	   Typography
+	   --------------------------------------------------------------------- */
+	--font-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
+	--font-mono: ui-monospace, 'Fira Mono', 'SFMono-Regular', monospace;
+
+	--text-xs: 0.75rem; /* TOC label, overlines */
+	--text-sm: 0.85rem; /* dates, footer, chips */
+	--text-base: 0.95rem; /* card overviews */
+	--text-md: 1.05rem; /* card titles */
+	--text-lg: 1.25rem; /* body copy, h2 */
+	--text-xl: 1.4rem; /* h1 */
+
+	--leading-tight: 1.35;
+	--leading-snug: 1.45;
+	--leading-normal: 1.5;
+	--leading-relaxed: 1.6;
+
+	--tracking-wide: 0.08em;
+	--tracking-wider: 0.1em;
+
+	--weight-normal: 400;
+	--weight-semibold: 600;
+
+	/* ---------------------------------------------------------------------
+	   Spacing — a 4px-based scale. Use these for padding/margin/gap so
+	   rhythm stays consistent instead of drifting per-component.
+	   --------------------------------------------------------------------- */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-10: 2.5rem;
+	--space-12: 3rem;
+	--space-16: 4rem;
+
+	/* Page gutter. The nav, footer, and every page body share this so their
+	   left edges line up into one vertical rhythm down the site. It narrows
+	   on small screens (see the media query below). */
+	--page-gutter: 10vw;
+
+	/* Width cap for reading columns. Long lines hurt readability, so prose
+	   never exceeds this regardless of viewport. */
+	--measure-prose: 640px;
+	--measure-article: 900px;
+
+	/* ---------------------------------------------------------------------
+	   Radii
+	   --------------------------------------------------------------------- */
+	--radius-sm: 4px;
+	--radius-md: 8px;
+	--radius-lg: 10px;
+	--radius-xl: 12px;
+	--radius-pill: 999px;
+
+	/* ---------------------------------------------------------------------
+	   Elevation — three steps: resting card, hovered card, floating panel.
+	   --------------------------------------------------------------------- */
+	--shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+	--shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
+	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+	/* ---------------------------------------------------------------------
+	   Motion. Respect prefers-reduced-motion by zeroing these (see app.css)
+	   rather than by disabling transitions in each component.
+	   --------------------------------------------------------------------- */
+	--duration-fast: 0.15s;
+	--duration-base: 0.2s;
+	--ease: ease;
+
+	/* ---------------------------------------------------------------------
+	   Layout constants shared across components.
+	   --------------------------------------------------------------------- */
+	--nav-height: 96px; /* fixed nav; TOC scroll offset must clear it */
+	--z-nav: 100;
+}
+
+/* The gutter tightens on phones. Because nav, footer, and page bodies all read
+   the same token, they stay aligned through the breakpoint automatically.
+
+   NOTE: this value is duplicated as a literal in the component media queries
+   below it — CSS cannot use a custom property in a media query condition. The
+   breakpoint tokens exist for documentation; see docs/ARCHITECTURE.md §4. */
+@media (max-width: 767px) {
+	:root {
+		--page-gutter: 6vw;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:root {
+		--duration-fast: 0s;
+		--duration-base: 0s;
+	}
+}

@@ -1,89 +1,103 @@
 <script>
-	import { onMount } from 'svelte';
+	// The headshot has a transparent canvas layered over it that visitors can
+	// scribble on. Migrated to Svelte 5 runes and pointer events, so it now works
+	// with a finger or stylus rather than a mouse only.
+	import Seo from '$lib/components/Seo.svelte';
 
-	let profileImage = '/headshot.jpg';
+	const BRUSH_WIDTH = 5;
 
-	// Canvas variables
-	let canvas;
-	let ctx;
-	let isDrawing = false;
+	/** @type {HTMLCanvasElement | undefined} */
+	let canvas = $state();
+	/** @type {CanvasRenderingContext2D | null} */
+	let ctx = null;
 
-	// Variable to track the canvas's physical size
-	let cWidth;
-	let cHeight;
+	let isDrawing = $state(false);
 
-	// This runs once upon load to set up our paintbrush
-	onMount(() => {
+	// The canvas is sized by CSS, but its drawing buffer must be set in pixels or
+	// strokes land offset from the cursor. Bound here, applied by the effect below.
+	let cssWidth = $state(0);
+	let cssHeight = $state(0);
+
+	// Re-runs whenever the element mounts or its measured size changes. Assigning
+	// width/height also clears the canvas, which is why the context is re-fetched
+	// alongside it rather than once on mount.
+	$effect(() => {
+		if (!canvas || !cssWidth || !cssHeight) return;
+
+		canvas.width = cssWidth;
+		canvas.height = cssHeight;
 		ctx = canvas.getContext('2d');
 	});
 
-	$: if (canvas && cWidth && cHeight) {
-		canvas.width = cWidth;
-		canvas.height = cHeight;
-	}
-
+	/** @param {PointerEvent} event */
 	function startDrawing(event) {
-		if (event.button != 0) return;
+		if (event.button !== 0 || !canvas) return;
 
 		isDrawing = true;
+		// Keeps receiving move events even if the pointer leaves the canvas
+		// mid-stroke, so a fast scribble doesn't break into segments.
+		canvas.setPointerCapture(event.pointerId);
 		draw(event);
 	}
 
 	function stopDrawing() {
 		isDrawing = false;
-		ctx.beginPath();
+		ctx?.beginPath();
 	}
 
 	function clearDrawing() {
+		if (!canvas || !ctx) return;
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	}
 
+	/** @param {PointerEvent} event */
 	function draw(event) {
-		if (!isDrawing) return;
+		if (!isDrawing || !canvas || !ctx) return;
 
-		// Get mouse coordinates relative to the canvas itself
+		// Pointer coordinates are viewport-relative; the canvas needs its own.
 		const rect = canvas.getBoundingClientRect();
 		const x = event.clientX - rect.left;
 		const y = event.clientY - rect.top;
 
-		// Paintbrush settings
-		ctx.lineWidth = 5;
+		ctx.lineWidth = BRUSH_WIDTH;
 		ctx.lineCap = 'round';
-		ctx.strokeStyle = '#ff0055';
+		ctx.strokeStyle = getComputedStyle(canvas).getPropertyValue('--color-accent').trim();
 
-		// Tells the canvas to draw a line from the last point to the nex (x,y)
 		ctx.lineTo(x, y);
-
-		// Actually paints the line onto the screen
 		ctx.stroke();
 
-		// Reset the path so the line follows the mouse
+		// Restart the path at the cursor so the line follows continuously.
 		ctx.beginPath();
 		ctx.moveTo(x, y);
 	}
 </script>
 
-<svelte:head>
-	<title>About Me | Oliver's Corner</title>
-</svelte:head>
+<Seo
+	title="About Me"
+	description="Oliver Lee — Computer Science graduate pursuing a second Bachelor's in Electrical Engineering at Georgia Tech, interested in integrated circuits, embedded systems, and semiconductor devices."
+/>
 
-<div class="interactive-art-station">
-	<img src={profileImage} alt="Hey it's me!" class="base-image" />
+<div class="art-station">
+	<img src="/headshot.jpg" alt="Oliver Lee" class="base-image" />
 
 	<canvas
 		class="drawing-canvas"
+		aria-label="Scribble over the photo. Left click to draw, right click to clear."
 		bind:this={canvas}
-		bind:clientWidth={cWidth}
-		bind:clientHeight={cHeight}
-		on:mousedown={startDrawing}
-		on:mousemove={draw}
-		on:mouseup={stopDrawing}
-		on:mouseleave={stopDrawing}
-		on:contextmenu|preventDefault={clearDrawing}
+		bind:clientWidth={cssWidth}
+		bind:clientHeight={cssHeight}
+		onpointerdown={startDrawing}
+		onpointermove={draw}
+		onpointerup={stopDrawing}
+		onpointercancel={stopDrawing}
+		oncontextmenu={(event) => {
+			event.preventDefault();
+			clearDrawing();
+		}}
 	></canvas>
 </div>
 
-<div class="page-wrapper">
+<div class="page">
 	<main>
 		<h1>About Me</h1>
 
@@ -116,10 +130,9 @@
 </div>
 
 <style>
-	/* The wrapper takes over the floating duties */
-	.interactive-art-station {
+	.art-station {
 		position: fixed;
-		right: 10vw;
+		right: var(--page-gutter);
 		top: 50%;
 		transform: translateY(-50%);
 		width: 350px;
@@ -129,26 +142,26 @@
 
 	.base-image {
 		width: 100%;
-		display: block; /* Removes a tiny gap under the image */
-		border-radius: 12px;
-		box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-		z-index: 0;
+		display: block; /* removes a tiny gap under the image */
+		border-radius: var(--radius-xl);
+		box-shadow: var(--shadow-lg);
 	}
 
-	/* The canvas perfectly covers the image */
+	/* The canvas sits exactly over the image. */
 	.drawing-canvas {
 		position: absolute;
-		top: 0;
-		left: 0;
+		inset: 0;
 		width: 100%;
 		height: 100%;
-		border-radius: 12px;
-		cursor: crosshair; /* Changes the mouse to look like a tool! */
+		border-radius: var(--radius-xl);
+		cursor: crosshair;
+		/* Stops the browser panning/zooming instead of drawing on touch. */
+		touch-action: none;
 	}
 
-	/* Responsive design: What happens on small screens? */
+	/* Below this width the prose column would collide with the photo. */
 	@media (max-width: 1420px) {
-		.interactive-art-station {
+		.art-station {
 			display: none;
 		}
 	}

@@ -1,61 +1,77 @@
 # Oliver's Corner
-Welcome to the repository containing my personal website "Oliver's Corner"!
 
-## Why Oliver's Corner?
-The complete sentimental meaning is "Oliver's corner of the internet", but I figured a shorter domain works much better
-for memorability and SEO.
+My personal website — technical write-ups, projects, and a ball pit.
 
-## TODO:
-- [ ] Add `src/lib/` directory to improve modularity
-- [ ] Organized `static/` directory contents
-- [ ] Improve project page structure by removing hardcoded components
-- [ ] Update everything to Svelte 5 syntax
-- [ ] Add blogpost pages
-- [ ] Make navigation bar links more maintainable
-- [ ] Make homepage cleaner
-- [x] Make `+layout.svelte` cleaner (done 04/10/26)
-    - [x] Create `app.css` global stylesheet (done 04/10/26)
-    - [x] Create `Nav.svelte` component (done 04/10/26)
+Built with [SvelteKit](https://svelte.dev/docs/kit) and
+[mdsvex](https://mdsvex.pngwn.io/), fully prerendered to static HTML, deployed
+on Vercel.
 
-<!-- # sv
+## Why "Oliver's Corner"?
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+The full sentimental meaning is "Oliver's corner of the internet", but a shorter domain works much better for memorability and SEO. Updates happen (hopefully) on a weekly basis and will be push promptly at noon on Sundays into the corresponding branch; whether it will be merged is a different story.
 
-## Creating a project
+<!-- ---
 
-If you're seeing this, you've probably already done this step. Congrats!
+## Quick start
 
 ```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.12.7 create --template demo --no-types --add prettier eslint --install npm .
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+| Command           | What it does                           |
+| ----------------- | -------------------------------------- |
+| `npm run dev`     | Dev server with hot reload             |
+| `npm run build`   | Production build; prerenders all pages |
+| `npm run preview` | Serve the production build locally     |
+| `npm run format`  | Apply Prettier                         |
+| `npm run lint`    | Prettier check + ESLint                |
 
-To create a production version of your app:
+--- -->
 
-```sh
-npm run build
+<!-- ## Documentation
+
+| I want to…                                  | Read                                             |
+| ------------------------------------------- | ------------------------------------------------ |
+| Publish a project, add an image, fix a typo | **[docs/CONTENT.md](docs/CONTENT.md)**           |
+| Understand how the site works, or extend it | **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** |
+
+**The short version:** adding a write-up means adding one Markdown file to
+`src/content/projects/` or `src/content/minis/`. Its card, page, URL, table of
+contents, and social preview all generate themselves.
+
+--- -->
+
+## Layout
+
+```
+src/
+├── content/       # Markdown write-ups — the source of truth
+├── lib/
+│   ├── content/   # the engine: discovery, sorting, route loaders, schema
+│   ├── components/
+│   ├── physics/   # homepage ball pit simulation
+│   ├── styles/    # design tokens
+│   └── config.js  # site name, URL, nav, socials
+├── routes/        # pages (mostly one-liners over shared components)
+└── app.css        # element defaults + layout primitives
+static/            # images and video, one folder per write-up
+docs/              # architecture + content guides
 ```
 
-You can preview the production build with `npm run preview`.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment. -->
+## TODO
+- [ ] Fix TODO to make it more actionable.
+- [x] Set the real production domain in `src/lib/config.js`
+- [ ] Add blogpost pages ([how to add a collection](docs/ARCHITECTURE.md#add-a-whole-new-collection-eg-a-blog))
+- [ ] Add project search & filtering (foundation in place — see ARCHITECTURE.md §10)
+- [ ] Add a sitemap and CI
+- [ ] Make homepage cleaner
+- [x] Update everything to Svelte 5 syntax (done 07/19/26)
+- [x] Make navigation bar links more maintainable (derived from config, done 07/19/26)
+- [x] Add design tokens so restyling is one file (done 07/19/26)
+- [x] Unify the projects/minis pipelines into one content engine (done 07/19/26)
+- [x] Add `src/lib/` components to improve modularity (done 07/16/26)
+- [x] Organize `static/` directory contents (done 07/16/26)
+- [x] Move project pages to Markdown/mdsvex (done 07/16/26)
+- [x] Make `+layout.svelte` cleaner (done 04/10/26)

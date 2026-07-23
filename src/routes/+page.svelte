@@ -1,249 +1,103 @@
 <script>
-	import { onMount } from 'svelte';
+	// The homepage: intro copy, social links, and the ball pit.
+	//
+	// The simulation itself lives in $lib/physics/balls.svelte.js — this file
+	// only measures the stage, forwards pointer events, and renders the balls.
+	import { createBallPit, BALL_RADIUS } from '$lib/physics/balls.svelte.js';
+	import { site, socialLinks } from '$lib/config.js';
+	import Seo from '$lib/components/Seo.svelte';
 
-	const name = 'Oliver Lee';
-	const links = [
-		{ label: 'GitHub', url: 'https://github.com/CodeXTL' },
-		{ label: 'Email', url: 'mailto:xli3086@gatech.edu' }
-	];
+	const pit = createBallPit();
 
-	// Window dimensions
-	let w_width;
-	let w_height;
+	// Stage size, measured from .ball-pit rather than window.innerWidth, which
+	// includes the scrollbar and would let balls sit outside the visible area.
+	let width = $state(0);
+	let height = $state(0);
 
-	// Some state vars
-	let is_dragging = false;
+	$effect(() => pit.resize(width, height));
+	$effect(() => pit.start());
 
-	// Ball params
-	let ball_radius = 25;
-	let ball_diameter = 2 * ball_radius;
-	let curr_id = 0;
-
-	// Array to hold the state of all balls
-	let balls = [
-		{
-			id: 0,
-			x: 100,
-			y: 100,
-			x_center: 100 - ball_radius,
-			y_center: 100 - ball_radius,
-			x_vel: 0,
-			y_vel: 0,
-			is_dragging: false
-		}
-	];
-
-	// Environment params
-	let g = 0.5;
-	let bounds_damping_factor = 0.8;
-	let collision_damping_factor = 0.9;
-
-	function startDrag(event, id) {
-		if (event.button == 0) {
-			for (let ball of balls) {
-				if (ball.id == id) {
-					ball.is_dragging = true;
-					break;
-				}
-			}
-		}
+	/** @param {PointerEvent & { currentTarget: EventTarget }} event */
+	function handleBackgroundPointerDown(event) {
+		// Only when pressing the background itself, not the text or a ball.
+		if (event.target !== event.currentTarget) return;
+		pit.spawn(event.clientX, event.clientY);
 	}
 
-	function stopDrag() {
-		for (let ball of balls) {
-			if (ball.is_dragging) {
-				ball.is_dragging = false;
-				break;
-			}
-		}
+	/** @param {PointerEvent} event @param {number} id */
+	function handleBallPointerDown(event, id) {
+		event.stopPropagation(); // don't also spawn a ball
+		event.preventDefault(); // avoid text selection / native drag
+		pit.grab(id);
 	}
-
-	function onDrag(event) {
-		for (let ball of balls) {
-			if (ball.is_dragging) {
-				// event.clientX and clientY give the exact pixel coordinates of the mouse.
-				if (event.clientX >= ball_radius * 1.1 && event.clientX < w_width - ball_radius * 1.1) {
-					ball.x = event.clientX - ball_radius;
-					ball.x_center = event.clientX;
-				}
-				if (event.clientY >= ball_radius * 1.1 && event.clientY < w_height - ball_radius * 1.1) {
-					ball.y = event.clientY - ball_radius;
-					ball.y_center = event.clientY;
-				}
-				break;
-			}
-		}
-		balls = balls; // Trigger Svelte to update HTML
-	}
-
-	function spawnBall(event) {
-		if (event.button == 0) {
-			curr_id += 1;
-			let new_ball = {
-				id: curr_id,
-				x: event.clientX - ball_radius,
-				y: event.clientY - ball_radius,
-				x_center: event.clientX,
-				y_center: event.clientY,
-				x_vel: 0,
-				y_vel: 0,
-				is_dragging: false
-			};
-			balls.push(new_ball);
-			balls = balls; // Trigger Svelte to update HTML
-		}
-	}
-
-	// Physics stuff
-
-	function checkBallCollisions() {
-		for (let i = 0; i < balls.length; i++) {
-			for (let j = i + 1; j < balls.length; j++) {
-				let ballA = balls[i];
-				let ballB = balls[j];
-
-				let dist_btwn_centers = Math.sqrt(
-					(ballA.x_center - ballB.x_center) ** 2 + (ballA.y_center - ballB.y_center) ** 2
-				);
-				if (dist_btwn_centers <= ball_diameter) {
-					// Normal vector from A to B
-					let nx = (ballB.x_center - ballA.x_center) / dist_btwn_centers;
-					let ny = (ballB.y_center - ballA.y_center) / dist_btwn_centers;
-
-					// Ensure correct ball positioning to prevent clumping
-					let overlap = ball_diameter - dist_btwn_centers;
-					if (overlap > 0) {
-						if (ballA.is_dragging) {
-							ballB.x += overlap * nx;
-							ballB.y += overlap * ny;
-							ballB.x_center += overlap * nx;
-							ballB.y_center += overlap * ny;
-						} else if (ballB.is_dragging) {
-							ballA.x -= overlap * nx;
-							ballA.y -= overlap * ny;
-							ballA.x_center -= overlap * nx;
-							ballA.y_center -= overlap * ny;
-						} else {
-							ballA.x -= (overlap / 2) * nx;
-							ballA.y -= (overlap / 2) * ny;
-							ballA.x_center -= (overlap / 2) * nx;
-							ballA.y_center -= (overlap / 2) * ny;
-
-							ballB.x += (overlap / 2) * nx;
-							ballB.y += (overlap / 2) * ny;
-							ballB.x_center += (overlap / 2) * nx;
-							ballB.y_center += (overlap / 2) * ny;
-						}
-					}
-
-					// Compute velocity of A relative to B
-					let d_vx = ballA.x_vel - ballB.x_vel;
-					let d_vy = ballA.y_vel - ballB.y_vel;
-
-					// Compute speed along normal vector
-					let speed = (nx * d_vx + ny * d_vy) * collision_damping_factor;
-
-					// If positive speed in the direction head-on the collision, update velocities accordingly
-					if (speed > 0) {
-						ballA.x_vel -= speed * nx;
-						ballA.y_vel -= speed * ny;
-						ballB.x_vel += speed * nx;
-						ballB.y_vel += speed * ny;
-					}
-				}
-			}
-		}
-		balls = balls; // Trigger Svelte to update HTML
-	}
-
-	function physicsLoop() {
-		checkBallCollisions();
-		for (let ball of balls) {
-			if (!ball.is_dragging) {
-				// Update horizontal (x) coord, with bounds checking
-				ball.x += ball.x_vel;
-				if (ball.x < 0) {
-					ball.x = 0;
-					ball.x_vel *= -bounds_damping_factor;
-				} else if (ball.x > w_width - ball_diameter) {
-					ball.x = w_width - ball_diameter;
-					ball.x_vel *= -bounds_damping_factor;
-				}
-				// Update horizontal (x) center coord
-				ball.x_center = ball.x + ball_radius;
-
-				// Update vertical (y) coord, with bounds checking
-				ball.y_vel += g;
-				ball.y += ball.y_vel;
-				ball.y_center = ball.y + ball_radius;
-				if (ball.y < 0) {
-					ball.y = 0;
-					ball.y_vel *= -bounds_damping_factor;
-				} else if (ball.y > w_height - ball_diameter) {
-					ball.y = w_height - ball_diameter;
-					ball.y_vel *= -bounds_damping_factor;
-				}
-				// Update vertical (y) center coord
-				ball.y_center = ball.y + ball_radius;
-			} else {
-				ball.x_vel = 0;
-				ball.y_vel = 0;
-			}
-		}
-		balls = balls; // Trigger Svelte to update HTML
-		requestAnimationFrame(physicsLoop);
-	}
-
-	onMount(() => {
-		physicsLoop();
-	});
 </script>
 
+<Seo />
+
 <svelte:window
-	bind:innerWidth={w_width}
-	bind:innerHeight={w_height}
-	on:mousemove={onDrag}
-	on:mouseup={stopDrag}
+	onpointermove={(event) => pit.drag(event.clientX, event.clientY)}
+	onpointerup={() => pit.release()}
 />
 
-<div class="page-wrapper" on:mousedown|self={spawnBall} role="presentation">
+<div class="page" onpointerdown={handleBackgroundPointerDown} role="presentation">
 	<main>
 		<header>
-			<h1>{name}</h1>
+			<h1>{site.author}</h1>
 			<p>
 				Welcome to my corner of the internet! I am an Electrical Engineering and Computer Science
 				student at Georgia Tech with a passion for semiconductor devices, embedded systems, and
-				VLSI. This website serves as a creative outlet for me to explore interesting things as well
-				as a portfolio of my academic journey, showcasing my technical projects, career aspirations,
-				and personal growth.
+				VLSI. This website serves as an outlet for me to explore interesting things as well as a
+				portfolio of my academic journey, showcasing my technical projects, career aspirations, and
+				personal growth.
 			</p>
-			<p>In the meantime, here's a ball to play around with.</p>
-			<ul>
-				<li>Click on any ball to drag it.</li>
-				<li>Click on any blank space to spawn more balls.</li>
-			</ul>
+
+			{#if pit.enabled}
+				<p>
+					Note that this website it still under heavy development. In the meantime, here's a ball to
+					play around with.
+				</p>
+				<ul>
+					<li>Grab and drag any ball, then let go to fling it.</li>
+					<li>Click any empty space to drop a new ball.</li>
+					<li>Ball dropping only works on wider screens, so it's off on phones.</li>
+				</ul>
+			{:else}
+				<p>
+					Note that this website it still under heavy development. In the meantime, there's a ball
+					pit to play around with here, but ball dropping only works on wider screens, so try this
+					page on a desktop.
+				</p>
+			{/if}
 		</header>
 
 		<nav>
-			{#each links as link}
-				<a href={link.url} target="_blank" rel="noreferrer">
+			{#each socialLinks as link (link.href)}
+				<a href={link.href} target="_blank" rel="noreferrer">
 					{link.label} <span class="arrow">=></span>
 				</a>
 			{/each}
 		</nav>
 	</main>
 
-	{#each balls as ball}
-		<div
-			class="ball"
-			draggable="false"
-			class:grabbing={ball.is_dragging}
-			style:left="{ball.x}px"
-			style:top="{ball.y}px"
-			on:mousedown|stopPropagation|preventDefault={(event) => startDrag(event, ball.id)}
-			role="presentation"
-		></div>
-	{/each}
+	<!-- Fixed and clipped, so balls can never grow the page's scrollable area.
+	     Being viewport-anchored also makes ball coordinates line up with the
+	     pointer's clientX/clientY no matter how far the page is scrolled. -->
+	<div class="ball-pit" bind:clientWidth={width} bind:clientHeight={height} aria-hidden="true">
+		{#if pit.enabled}
+			{#each pit.balls as ball (ball.id)}
+				<div
+					class="ball"
+					class:grabbing={ball.id === pit.draggingId}
+					style:transform="translate({ball.x}px, {ball.y}px){ball.id === pit.draggingId
+						? ' scale(1.1)'
+						: ''}"
+					style:--ball-size="{BALL_RADIUS * 2}px"
+					onpointerdown={(event) => handleBallPointerDown(event, ball.id)}
+					role="presentation"
+				></div>
+			{/each}
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -256,23 +110,23 @@
 	a {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: var(--space-2);
 		text-decoration: none;
-		color: #888;
+		color: var(--color-text-subtle);
 		font-size: 0.9rem;
 		width: fit-content;
-		transition: color 0.2s ease;
+		transition: color var(--duration-base) var(--ease);
 	}
 
 	.arrow {
 		font-size: 0.8rem;
 		opacity: 0;
 		transform: translateX(-5px);
-		transition: all 0.2s ease;
+		transition: all var(--duration-base) var(--ease);
 	}
 
 	a:hover {
-		color: #000;
+		color: var(--color-text-strong);
 	}
 
 	a:hover .arrow {
@@ -280,19 +134,38 @@
 		transform: translateX(0);
 	}
 
+	/* The stage the balls live on. Fixed + hidden overflow means it never
+	   contributes to document height/width, so no stray scrollbars. */
+	.ball-pit {
+		position: fixed;
+		inset: 0;
+		overflow: hidden;
+		z-index: 10; /* floats above the page content */
+		pointer-events: none; /* never swallow clicks meant for the page */
+	}
+
 	.ball {
-		width: 50px;
-		height: 50px;
-		background: #000;
-		border-radius: 50%;
 		position: absolute;
+		top: 0;
+		left: 0;
+		/* Driven by BALL_RADIUS so the CSS can't drift from the physics. */
+		width: var(--ball-size);
+		height: var(--ball-size);
+		background: var(--color-text-strong);
+		border-radius: 50%;
 		cursor: grab;
-		z-index: 10; /* Ensures the ball floats above everything else */
+		pointer-events: auto; /* ...but the balls themselves stay grabbable */
+		touch-action: none; /* drag on touchscreens without scrolling */
+		user-select: none;
+		will-change: transform; /* hint the browser to composite on the GPU */
 	}
 
 	.grabbing {
 		cursor: grabbing;
-		transform: scale(1.1);
 		background: #444;
+		/* NOTE: the 1.1 scale is applied inline alongside translate() so the two
+		   compose correctly. Don't move it to the standalone `scale:` property —
+		   that applies before `transform`, multiplying the translate and shifting
+		   the ball off the cursor by ~0.1x its position. */
 	}
 </style>
