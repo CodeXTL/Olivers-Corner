@@ -1,0 +1,91 @@
+/* =============================================================================
+   Typography — all text styling, in one place.
+
+   Content on this site is authored as Markdown, so mdsvex renders bare <h2>,
+   <p>, <li>, … with no class to hang styles on. These element selectors ARE the
+   content styling; they also style the headings routes write directly (e.g. the
+   <h1> on the About page), so prose and page chrome stay visually consistent.
+
+   Two tiers, in cascade order:
+
+     1. Element defaults — every heading/paragraph/list/code on the site.
+     2. Article prose (`.post`) — extra treatment for write-up bodies only. The
+        `.post` wrapper is added by ArticleLayout.svelte; because those rules are
+        here (not scoped in the component) they need no `:global`, and all text
+        styling stays reviewable in this single file.
+
+   Standalone Markdown pages (e.g. Career Goals) get tier 1 only. Wrap a page's
+   content in `.post` to opt it into the fuller article treatment.
+   ============================================================================= */
+
+/* -----------------------------------------------------------------------------
+   1. Element defaults
+   -------------------------------------------------------------------------- */
+
+h1 {
+	font-size: var(--text-xl);
+	font-weight: var(--weight-semibold);
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-wider);
+	margin-bottom: var(--space-6);
+	color: var(--color-text-strong);
+}
+
+h2 {
+	font-size: var(--text-lg);
+	font-weight: var(--weight-semibold);
+	margin-top: var(--space-10);
+	margin-bottom: var(--space-4);
+	color: var(--color-text-heading);
+	border-bottom: 1px solid var(--color-border);
+	padding-bottom: var(--space-2);
+}
+
+p,
+li {
+	font-size: var(--text-lg);
+	line-height: var(--leading-normal);
+	margin-bottom: var(--space-4);
+	color: var(--color-text);
+}
+
+code {
+	font-family: var(--font-mono);
+}
+
+/* -----------------------------------------------------------------------------
+   2. Article prose — write-up bodies (.post)
+
+   Layered onto the element defaults above: a heavier heading rule, a more
+   relaxed measure, list indentation, and inline-code chips. These win over the
+   defaults by coming later in the cascade with higher specificity.
+   -------------------------------------------------------------------------- */
+
+.post h2 {
+	border-bottom: 2px solid var(--color-border);
+	padding-bottom: var(--space-2);
+	margin-top: var(--space-10);
+	margin-bottom: var(--space-4);
+}
+
+.post p {
+	line-height: var(--leading-relaxed);
+	margin-bottom: var(--space-4);
+}
+
+.post ul,
+.post ol {
+	line-height: var(--leading-relaxed);
+	padding-left: var(--space-6);
+}
+
+.post li {
+	margin-bottom: var(--space-3);
+}
+
+.post code {
+	background: var(--color-surface-muted);
+	padding: 0.15rem 0.35rem;
+	border-radius: var(--radius-sm);
+	font-size: 0.95em;
+}

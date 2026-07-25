@@ -1,114 +1,30 @@
 /* =============================================================================
-   Global stylesheet.
+   Global stylesheet — the manifest.
 
-   Scope discipline: this file owns only things that are genuinely global —
-   the design tokens, element defaults for Markdown-generated HTML, and the
-   shared layout primitives. Anything belonging to one component lives in that
-   component's <style> block instead.
+   This file is intentionally just an ordered list of imports. Every global rule
+   lives in a partial under lib/styles/, split by responsibility so there is one
+   obvious place to look for each kind of change. Anything belonging to a single
+   component stays in that component's <style> block, not here.
+
+   Import order IS the cascade order — later files win ties against earlier ones,
+   so keep this sequence:
+
+     1. tokens      — design values (colour, space, type…). No rules, just
+                      custom properties, so it must load first: everything below
+                      references them.
+     2. base        — reset and document-level defaults (box model, body, focus).
+     3. typography  — all text styling: element defaults + article prose.
+     4. layout      — page wrappers (.page, .page-wide).
+
+   Component <style> blocks are unscoped-to-this-file and always take precedence
+   over these globals, which is what lets a component override a base rule when
+   it genuinely needs to.
+
+   See docs/STYLING.md for the full guide: what each file owns and how to make
+   common changes.
    ============================================================================= */
 
 @import './lib/styles/tokens.css';
-
-/* -----------------------------------------------------------------------------
-   Reset / base
-   -------------------------------------------------------------------------- */
-
-*,
-*::before,
-*::after {
-	box-sizing: border-box;
-}
-
-body {
-	margin: 0;
-	padding: 0;
-	/* Column flex + full viewport height lets the footer settle at the bottom
-	   even when a page's content is short. */
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	background-color: var(--color-canvas);
-	color: var(--color-text-heading);
-	font-family: var(--font-sans);
-}
-
-/* One focus style for the whole site. Components should not define their own
-   unless they need a different shape — that keeps keyboard navigation
-   predictable and makes the ring a one-line change in tokens.css. */
-:focus-visible {
-	outline: var(--focus-ring-width) solid var(--focus-ring-color);
-	outline-offset: var(--focus-ring-offset);
-	border-radius: var(--radius-sm);
-}
-
-img,
-video {
-	max-width: 100%;
-}
-
-/* -----------------------------------------------------------------------------
-   Element defaults
-
-   These style the HTML that mdsvex generates from Markdown. Because content is
-   authored as Markdown, there is nowhere to hang a class on a heading or
-   paragraph — so these element selectors ARE the content styling.
-   -------------------------------------------------------------------------- */
-
-h1 {
-	font-size: var(--text-xl);
-	font-weight: var(--weight-semibold);
-	text-transform: uppercase;
-	letter-spacing: var(--tracking-wider);
-	margin-bottom: var(--space-6);
-	color: var(--color-text-strong);
-}
-
-h2 {
-	font-size: var(--text-lg);
-	font-weight: var(--weight-semibold);
-	margin-top: var(--space-10);
-	margin-bottom: var(--space-4);
-	color: var(--color-text-heading);
-	border-bottom: 1px solid var(--color-border);
-	padding-bottom: var(--space-2);
-}
-
-p,
-li {
-	font-size: var(--text-lg);
-	line-height: var(--leading-normal);
-	margin-bottom: var(--space-4);
-	color: var(--color-text);
-}
-
-code {
-	font-family: var(--font-mono);
-}
-
-/* -----------------------------------------------------------------------------
-   Layout primitives
-
-   Shared wrappers so routes don't each reinvent their padding. Pages compose
-   these instead of writing their own `padding: 10vw`.
-   -------------------------------------------------------------------------- */
-
-/* Text pages (about, resume, goals): flush-left gutter, capped measure. */
-.page {
-	display: flex;
-	flex-direction: column;
-	/* Top padding is floored at the fixed nav's height so a heading never hides
-	   behind the nav when the vw-based gutter shrinks on narrow viewports. On
-	   wide screens the gutter wins and the airy spacing is unchanged. */
-	padding: max(var(--page-gutter), var(--nav-height)) 0 5vw var(--page-gutter);
-}
-
-.page > main {
-	max-width: var(--measure-prose);
-}
-
-/* Listing pages (projects, blog): gutter on all sides, because their cards
-   read as a grid rather than as a column of prose. */
-.page-wide {
-	/* Same nav-clearance floor as .page; the sides and bottom stay the gutter. */
-	padding: max(var(--page-gutter), var(--nav-height)) var(--page-gutter) var(--page-gutter);
-}
+@import './lib/styles/base.css';
+@import './lib/styles/typography.css';
+@import './lib/styles/layout.css';

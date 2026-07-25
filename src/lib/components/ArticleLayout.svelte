@@ -86,40 +86,8 @@
 		color: var(--color-text-strong);
 	}
 
-	/* -------------------------------------------------------------------------
-	   Prose styling.
-
-	   The Markdown body is slotted in as a snippet, so these rules need :global
-	   to reach it — Svelte's scoping can't see markup it didn't compile. This
-	   block is why every write-up looks consistent without any per-file CSS.
-	   ---------------------------------------------------------------------- */
-
-	.post :global(h2) {
-		border-bottom: 2px solid var(--color-border);
-		padding-bottom: var(--space-2);
-		margin-top: var(--space-10);
-		margin-bottom: var(--space-4);
-	}
-
-	.post :global(p) {
-		line-height: var(--leading-relaxed);
-		margin-bottom: var(--space-4);
-	}
-
-	.post :global(ul),
-	.post :global(ol) {
-		line-height: var(--leading-relaxed);
-		padding-left: var(--space-6);
-	}
-
-	.post :global(li) {
-		margin-bottom: var(--space-3);
-	}
-
-	.post :global(code) {
-		background: var(--color-surface-muted);
-		padding: 0.15rem 0.35rem;
-		border-radius: var(--radius-sm);
-		font-size: 0.95em;
-	}
+	/* The write-up body's prose (the `.post` wrapper below) is styled globally in
+	   lib/styles/typography.css, alongside the base element rules it builds on, so
+	   all content styling lives in one file. Only the article's own layout chrome
+	   stays here. */
 </style>

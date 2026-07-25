@@ -51,10 +51,10 @@ src/
 │   ├── content/   # the engine: discovery, sorting, route loaders, schema
 │   ├── components/
 │   ├── physics/   # homepage ball pit simulation
-│   ├── styles/    # design tokens
+│   ├── styles/    # global CSS partials: tokens, base, typography, layout
 │   └── config.js  # site name, URL, nav, socials
 ├── routes/        # pages (mostly one-liners over shared components)
-└── app.css        # element defaults + layout primitives
+└── app.css        # global stylesheet manifest (imports lib/styles/*)
 static/            # images and video, one folder per write-up
 docs/              # architecture + content guides
 ```

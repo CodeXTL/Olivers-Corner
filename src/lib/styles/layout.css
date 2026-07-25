@@ -1,0 +1,29 @@
+/* =============================================================================
+   Layout primitives — shared page wrappers.
+
+   So routes don't each reinvent their padding: a page composes one of these
+   instead of writing its own `padding: 10vw`. Both floor their top padding at
+   the fixed nav's height (--nav-height) so a heading never hides behind the nav
+   when the vw-based gutter shrinks on narrow viewports; on wide screens the
+   gutter wins and the spacing is unchanged.
+
+   Article write-ups use their own `.article` wrapper inside ArticleLayout.svelte
+   rather than one of these, because the TOC column makes their grid different.
+   ============================================================================= */
+
+/* Text pages (about, resume, goals): flush-left gutter, capped measure. */
+.page {
+	display: flex;
+	flex-direction: column;
+	padding: max(var(--page-gutter), var(--nav-height)) 0 5vw var(--page-gutter);
+}
+
+.page > main {
+	max-width: var(--measure-prose);
+}
+
+/* Listing pages (projects, blog): gutter on all sides, because their cards
+   read as a grid rather than as a column of prose. */
+.page-wide {
+	padding: max(var(--page-gutter), var(--nav-height)) var(--page-gutter) var(--page-gutter);
+}

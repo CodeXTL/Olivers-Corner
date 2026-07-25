@@ -59,8 +59,8 @@
 			45deg,
 			var(--color-surface-muted),
 			var(--color-surface-muted) 10px,
-			#e8e8e8 10px,
-			#e8e8e8 20px
+			var(--color-placeholder-stripe) 10px,
+			var(--color-placeholder-stripe) 20px
 		);
 	}
 

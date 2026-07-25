@@ -78,27 +78,32 @@ the projects directory.
 
 ### Components
 
-| Path                                        | What it is                                                                 |
-| ------------------------------------------- | -------------------------------------------------------------------------- |
-| `src/lib/components/CollectionPage.svelte`  | A whole listing page for any collection. Both listings are one line each.  |
-| `src/lib/components/EntryPage.svelte`       | A whole write-up page for any collection.                                  |
-| `src/lib/components/ArticleLayout.svelte`   | Shared write-up chrome: back-link, title, chips, TOC, and the prose CSS.   |
-| `src/lib/components/EntryListCard.svelte`   | Wide stacked card — the `list` listing layout.                             |
-| `src/lib/components/EntryGridCard.svelte`   | Fixed-height card — the `grid` listing layout.                             |
-| `src/lib/components/Seo.svelte`             | Every page's `<head>`: title, description, canonical, Open Graph, Twitter. |
-| `src/lib/components/Nav.svelte`             | Top nav. Links come from config; highlights the current section.           |
-| `src/lib/components/Footer.svelte`          | Footer. Its top edge is also the ball pit's floor.                         |
-| `src/lib/components/TableOfContents.svelte` | Sticky TOC built from the rendered headings.                               |
-| `src/lib/components/CategoryList.svelte`    | Category chips.                                                            |
-| `src/lib/components/Figure.svelte`          | Captioned image, with a `Figure N.` label.                                 |
-| `src/lib/components/VideoFigure.svelte`     | Captioned looping video, with a `Video N.` label.                          |
+| Path                                        | What it is                                                                                            |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `src/lib/components/CollectionPage.svelte`  | A whole listing page for any collection. Both listings are one line each.                             |
+| `src/lib/components/EntryPage.svelte`       | A whole write-up page for any collection.                                                             |
+| `src/lib/components/ArticleLayout.svelte`   | Shared write-up chrome: back-link, title, chips, TOC. Prose CSS lives in `lib/styles/typography.css`. |
+| `src/lib/components/EntryListCard.svelte`   | Wide stacked card — the `list` listing layout.                                                        |
+| `src/lib/components/EntryGridCard.svelte`   | Fixed-height card — the `grid` listing layout.                                                        |
+| `src/lib/components/Seo.svelte`             | Every page's `<head>`: title, description, canonical, Open Graph, Twitter.                            |
+| `src/lib/components/Nav.svelte`             | Top nav. Links come from config; highlights the current section.                                      |
+| `src/lib/components/Footer.svelte`          | Footer. Its top edge is also the ball pit's floor.                                                    |
+| `src/lib/components/TableOfContents.svelte` | Sticky TOC built from the rendered headings.                                                          |
+| `src/lib/components/CategoryList.svelte`    | Category chips.                                                                                       |
+| `src/lib/components/Figure.svelte`          | Captioned image, with a `Figure N.` label.                                                            |
+| `src/lib/components/VideoFigure.svelte`     | Captioned looping video, with a `Video N.` label.                                                     |
 
 ### Styling
 
-| Path                        | What it is                                                        |
-| --------------------------- | ----------------------------------------------------------------- |
-| `src/lib/styles/tokens.css` | **All** colour, spacing, type, radius, shadow, and motion values. |
-| `src/app.css`               | Element defaults for Markdown output, plus layout primitives.     |
+See **[STYLING.md](STYLING.md)** for the full guide. In short:
+
+| Path                            | What it is                                                        |
+| ------------------------------- | ----------------------------------------------------------------- |
+| `src/app.css`                   | Manifest: imports the partials below, in cascade order.           |
+| `src/lib/styles/tokens.css`     | **All** colour, spacing, type, radius, shadow, and motion values. |
+| `src/lib/styles/base.css`       | Reset and document-level defaults (box model, body, focus).       |
+| `src/lib/styles/typography.css` | All text styling: element defaults + article prose.               |
+| `src/lib/styles/layout.css`     | Page wrappers (`.page`, `.page-wide`).                            |
 
 ### Routes
 
@@ -189,40 +194,58 @@ that a bad field won't fail CI — if you'd rather it did, throw instead of
 
 ## 4. Styling
 
+This is the overview; **[STYLING.md](STYLING.md)** is the working guide — the
+file-by-file breakdown and step-by-step recipes for common changes.
+
+### The shape of it
+
+Global CSS is split by responsibility into partials under `src/lib/styles/`,
+which `src/app.css` imports in cascade order:
+
+```
+app.css                 ← manifest: just the imports below, in order
+└─ lib/styles/
+   ├─ tokens.css        ← design values (custom properties)
+   ├─ base.css          ← reset + document defaults
+   ├─ typography.css    ← all text styling (elements + article prose)
+   └─ layout.css        ← page wrappers (.page, .page-wide)
+```
+
+Import order **is** the cascade: a later file wins ties against an earlier one,
+and a component's own `<style>` block wins over all of them. Anything specific to
+one component stays in that component, not in these globals.
+
 ### Tokens
 
-`src/lib/styles/tokens.css` holds every colour, space, radius, shadow, and
-duration as a CSS custom property. Components reference `var(--color-text)`,
-never `#333`. Restyling the site is an edit to that one file.
+`tokens.css` holds every colour, space, radius, shadow, and duration as a custom
+property. Components reference `var(--color-text)`, never `#333`. Restyling the
+site is an edit to that one file.
 
 Tokens are named for their **role** (`--color-surface`), not their value
 (`--color-white`) — that's what lets the palette change without every name
-becoming a lie.
-
-**If you're about to type a raw hex code or a magic pixel value into a
-component, add a token instead.**
-
-### Layout primitives
-
-`app.css` defines two wrappers so routes don't reinvent padding:
-
-- `.page` — standard gutter, capped reading measure. Text pages use this.
-- `.page-wide` — gutter on all sides. Listing pages use this.
-
-Both read `--page-gutter`, which narrows at the mobile breakpoint. Because nav,
-footer, and page bodies all read that same token, their left edges stay aligned
-through the breakpoint automatically.
+becoming a lie. **If you're about to type a raw hex code or magic pixel value
+into a component, add a token instead** — even a one-component colour like the
+paintbrush or the ball-grab shade lives here, so no raw hex sits in a `.svelte`
+file.
 
 ### Styling Markdown
 
-Content is Markdown, so there's nowhere to hang a class on a heading or
-paragraph. Two places handle this:
+Content is Markdown, so there's nowhere to hang a class on a heading. All of it
+is handled in `typography.css`, in two tiers: bare element selectors (`h1`, `h2`,
+`p`, …) style every heading and paragraph on the site, and `.post` rules layer
+extra treatment onto write-up bodies. Keeping both tiers in one file is the point
+— there's a single place to answer "how does content look?". No `:global` is
+needed because these rules are already global; the `.post` wrapper is added by
+`ArticleLayout.svelte`.
 
-- **`app.css` element selectors** (`h1`, `h2`, `p`, `li`) style Markdown output
-  globally.
-- **`ArticleLayout.svelte`'s `.post :global(…)` rules** style write-up prose.
-  `:global` is required because Svelte's scoping can't see markup it didn't
-  compile — the article is slotted in as a snippet.
+### Layout primitives
+
+`layout.css` defines `.page` (text pages) and `.page-wide` (listing pages) so
+routes don't reinvent padding. Both read `--page-gutter`, which narrows at the
+mobile breakpoint, and both floor their top padding at `--nav-height` so headings
+clear the fixed nav on narrow screens. Because nav, footer, and page bodies all
+read the same gutter token, their left edges stay aligned through the breakpoint
+automatically.
 
 ### One known duplication
 

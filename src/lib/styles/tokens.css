@@ -38,10 +38,15 @@
 	   --------------------------------------------------------------------- */
 	--color-border: #eaeaea; /* hairlines under headings, around images */
 	--color-border-strong: #e2e2e2; /* chip outlines */
+
+	/* A few colours are tied to one component but still live here, so no raw hex
+	   sits in a .svelte file and every colour is changed in one place. */
 	--color-accent: #ff0055; /* the about-page paintbrush */
+	--color-placeholder-stripe: #e8e8e8; /* diagonal stripe on empty card thumbnails */
+	--color-ball-grabbed: #444; /* the homepage ball while held */
 
 	/* Focus ring. Defined once so keyboard navigation looks identical
-	   everywhere — see the shared :focus-visible rule in app.css. */
+	   everywhere — see the shared :focus-visible rule in base.css. */
 	--focus-ring-color: var(--color-text-heading);
 	--focus-ring-width: 2px;
 	--focus-ring-offset: 3px;
@@ -112,8 +117,9 @@
 	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
 
 	/* ---------------------------------------------------------------------
-	   Motion. Respect prefers-reduced-motion by zeroing these (see app.css)
-	   rather than by disabling transitions in each component.
+	   Motion. Respect prefers-reduced-motion by zeroing these (see the media
+	   query at the foot of this file) rather than by disabling transitions in
+	   each component.
 	   --------------------------------------------------------------------- */
 	--duration-fast: 0.15s;
 	--duration-base: 0.2s;

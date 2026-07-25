@@ -1,0 +1,41 @@
+/* =============================================================================
+   Base — reset and document-level defaults.
+
+   The small set of rules that apply to the whole document before any content or
+   component styling: the box model, the body/page frame, the shared focus ring,
+   and media sizing. Text styling lives in typography.css; page wrappers live in
+   layout.css. Keep this file to genuinely document-wide concerns.
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	/* Column flex + full viewport height lets the footer settle at the bottom
+	   even when a page's content is short. */
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	background-color: var(--color-canvas);
+	color: var(--color-text-heading);
+	font-family: var(--font-sans);
+}
+
+/* One focus style for the whole site. Components should not define their own
+   unless they need a different shape — that keeps keyboard navigation
+   predictable and makes the ring a one-line change in tokens.css. */
+:focus-visible {
+	outline: var(--focus-ring-width) solid var(--focus-ring-color);
+	outline-offset: var(--focus-ring-offset);
+	border-radius: var(--radius-sm);
+}
+
+img,
+video {
+	max-width: 100%;
+}

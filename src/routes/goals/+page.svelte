@@ -1,7 +1,8 @@
 <script>
 	// Prose lives in src/content/goals.md so it can be edited without touching
-	// markup. Styling needs no work here: the global element rules in app.css
-	// cover the Markdown output exactly as they covered hand-written HTML.
+	// markup. Styling needs no work here: the global element rules in
+	// lib/styles/typography.css cover the Markdown output exactly as they
+	// covered hand-written HTML.
 	//
 	// This is the "singleton page" pattern — a standalone .md file rather than a
 	// collection. See docs/CONTENT.md §3.

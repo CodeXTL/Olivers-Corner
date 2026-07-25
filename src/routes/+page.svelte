@@ -162,7 +162,7 @@
 
 	.grabbing {
 		cursor: grabbing;
-		background: #444;
+		background: var(--color-ball-grabbed);
 		/* NOTE: the 1.1 scale is applied inline alongside translate() so the two
 		   compose correctly. Don't move it to the standalone `scale:` property —
 		   that applies before `transform`, multiplying the translate and shifting
