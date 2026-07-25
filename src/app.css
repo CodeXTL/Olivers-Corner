@@ -96,7 +96,10 @@ code {
 .page {
 	display: flex;
 	flex-direction: column;
-	padding: var(--page-gutter) 0 5vw var(--page-gutter);
+	/* Top padding is floored at the fixed nav's height so a heading never hides
+	   behind the nav when the vw-based gutter shrinks on narrow viewports. On
+	   wide screens the gutter wins and the airy spacing is unchanged. */
+	padding: max(var(--page-gutter), var(--nav-height)) 0 5vw var(--page-gutter);
 }
 
 .page > main {
@@ -106,5 +109,6 @@ code {
 /* Listing pages (projects, blog): gutter on all sides, because their cards
    read as a grid rather than as a column of prose. */
 .page-wide {
-	padding: var(--page-gutter);
+	/* Same nav-clearance floor as .page; the sides and bottom stay the gutter. */
+	padding: max(var(--page-gutter), var(--nav-height)) var(--page-gutter) var(--page-gutter);
 }

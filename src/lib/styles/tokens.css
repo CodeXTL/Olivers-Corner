@@ -122,7 +122,11 @@
 	/* ---------------------------------------------------------------------
 	   Layout constants shared across components.
 	   --------------------------------------------------------------------- */
-	--nav-height: 96px; /* fixed nav; TOC scroll offset must clear it */
+	/* Height reserved for the fixed nav. Floors the top padding of every page
+	   wrapper (.page/.page-wide/.article) so headings clear the nav at any
+	   width, and is mirrored by the TOC scroll offset. Must stay >= the nav's
+	   real rendered height (~67px desktop, ~48px mobile). */
+	--nav-height: 96px;
 	--z-nav: 100;
 }
 

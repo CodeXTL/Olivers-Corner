@@ -50,7 +50,9 @@
 		grid-template-columns: minmax(0, var(--measure-article));
 		justify-content: center;
 		margin: 0 auto;
-		padding: var(--space-8);
+		/* Top clears the fixed nav; the back-link is the first element and would
+		   otherwise sit behind it. Sides and bottom keep the standard inset. */
+		padding: var(--nav-height) var(--space-8) var(--space-8);
 	}
 
 	.toc-column {
