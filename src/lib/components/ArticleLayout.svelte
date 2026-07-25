@@ -3,8 +3,8 @@
 	// category chips, table of contents, and the CSS that styles the prose that
 	// mdsvex generated from Markdown.
 	//
-	// Named for what it does rather than for one collection — projects, minis,
-	// and any future blog all render through this same component.
+	// Named for what it does rather than for one collection — projects, blog
+	// posts, and any future collection all render through this same component.
 	import CategoryList from './CategoryList.svelte';
 	import TableOfContents from './TableOfContents.svelte';
 

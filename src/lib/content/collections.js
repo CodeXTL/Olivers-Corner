@@ -4,27 +4,29 @@
  * A "collection" is a folder of Markdown under `src/content/` that gets its own
  * listing page and per-entry pages. Everything that differs between collections
  * lives here as data; the engine and the route components read it. Nothing about
- * projects or minis is hardcoded anywhere else.
+ * projects or the blog is hardcoded anywhere else.
  *
- * ## Adding a collection (e.g. a blog)
+ * ## Adding a collection (e.g. notes)
  *
- * 1. Create the folder: `src/content/posts/`.
+ * 1. Create the folder: `src/content/notes/`.
  * 2. Add an entry to the object below, keyed by folder name.
  * 3. Create two tiny route files that pass the key through:
- *      routes/blog/+page.svelte        → <CollectionPage collection="posts" />
- *      routes/blog/[slug]/+page.js     → export const { load, entries } = entryRoute('posts')
- *      routes/blog/[slug]/+page.svelte → <EntryPage {data} collection="posts" />
+ *      routes/notes/+page.svelte        → <CollectionPage collection="notes" />
+ *      routes/notes/[slug]/+page.js     → export const { load, entries } = entryRoute('notes')
+ *      routes/notes/[slug]/+page.svelte → <EntryPage {data} collection="notes" />
  *
  * That's the whole cost. The listing, sorting, categories, prerendering, SEO
  * tags, and nav link all follow from this registry.
  *
  * @see docs/ARCHITECTURE.md §3
+ *
+ * Both current collections — `projects` and `blog` — are just entries below.
  */
 
 /**
  * How a collection's listing page renders its entries.
  * - `list` — a vertical stack of wide cards with category chips (projects).
- * - `grid` — a fixed-height card grid, better for many short entries (minis).
+ * - `grid` — a fixed-height card grid, better for many short entries (blog).
  *
  * @typedef {'list' | 'grid'} ListingLayout
  */
@@ -48,23 +50,21 @@ export const collections = {
 		path: '/projects',
 		navLabel: 'Projects',
 		heading: 'Technical Projects',
-		description:
-			'Full technical project write-ups by Oliver Lee.',
+		description: 'Full technical project write-ups by Oliver Lee.',
 		layout: 'list',
 		empty: 'No projects published yet.'
 	},
 
-	minis: {
-		name: 'minis',
-		path: '/minis',
-		navLabel: 'Minis',
-		heading: 'Mini Projects',
-		description:
-			'Smaller builds and experiments by Oliver Lee.',
+	blog: {
+		name: 'blog',
+		path: '/blog',
+		navLabel: 'Blog',
+		heading: 'Blog',
+		description: 'Deep dives, project breakdowns, and things worth explaining, by Oliver Lee.',
 		layout: 'grid',
 		intro:
-			'Smaller builds and experiments; the things that were too quick to earn a full write-up but still worth showing.',
-		empty: 'No mini projects yet, check back soon.'
+			'Deep dives, breakdowns of parts of a project, and the occasional thing I just think is cool and want to explain.',
+		empty: 'No posts yet, check back soon.'
 	}
 };
 

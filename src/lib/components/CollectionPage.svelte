@@ -1,7 +1,7 @@
 <script>
 	// The listing page for any collection.
 	//
-	// `/projects` and `/minis` were near-identical files that differed only in
+	// `/projects` and `/blog` were near-identical files that differed only in
 	// which array they imported and whether cards stacked or gridded. Both are
 	// now one-liners that name their collection; this component reads the rest
 	// from the registry, so a third collection costs no new listing code.

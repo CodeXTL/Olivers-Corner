@@ -1,7 +1,7 @@
 # Adding & Editing Content
 
-This is the day-to-day guide: how to publish a project, add a mini, change a
-category, drop in images. You don't need to understand the codebase to use it —
+This is the day-to-day guide: how to publish a project, add a blog post, change
+a category, drop in images. You don't need to understand the codebase to use it —
 if you just want to write, this is the only file you need.
 
 For how the machinery underneath works, see [ARCHITECTURE.md](ARCHITECTURE.md).
@@ -17,14 +17,14 @@ register it in.
 
 ---
 
-## 2. Add a project or a mini
+## 2. Add a project or a blog post
 
 ### Step 1 — create the file
 
-| To add a…    | Create                           | It appears at      |
-| ------------ | -------------------------------- | ------------------ |
-| Project      | `src/content/projects/<slug>.md` | `/projects/<slug>` |
-| Mini project | `src/content/minis/<slug>.md`    | `/minis/<slug>`    |
+| To add a… | Create                           | It appears at      |
+| --------- | -------------------------------- | ------------------ |
+| Project   | `src/content/projects/<slug>.md` | `/projects/<slug>` |
+| Blog post | `src/content/blog/<slug>.md`     | `/blog/<slug>`     |
 
 **The filename becomes the URL.** `my-robot.md` → `/projects/my-robot`. Use
 lowercase words separated by hyphens; avoid spaces, capitals, and underscores.
@@ -179,8 +179,8 @@ src/content/
 ├── projects/          ← full write-ups        → /projects/<slug>
 │   ├── mousecam.md
 │   └── pixshift.md
-├── minis/             ← short write-ups       → /minis/<slug>
-│   └── example-mini.md
+├── blog/              ← posts & deep dives    → /blog/<slug>
+│   └── example-post.md
 └── goals.md           ← a standalone page     → /goals
 
 static/
@@ -210,7 +210,7 @@ prerendered to static HTML, a broken internal link or a bad component import
 
 **My entry doesn't appear.**
 Check the file is directly inside `src/content/projects/` or
-`src/content/minis/` (not a sub-folder), and that the extension is `.md`.
+`src/content/blog/` (not a sub-folder), and that the extension is `.md`.
 
 **The card shows a striped placeholder instead of my image.**
 The `thumbnail` path is wrong or the file isn't there. It must start with `/`

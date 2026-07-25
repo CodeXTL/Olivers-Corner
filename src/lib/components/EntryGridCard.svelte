@@ -1,5 +1,5 @@
 <script>
-	// A fixed-height grid card — the `grid` listing layout. Used by /minis, where
+	// A fixed-height grid card — the `grid` listing layout. Used by /blog, where
 	// many short entries need to stay scannable.
 	//
 	// Every card is the same height so the grid stays even regardless of how long

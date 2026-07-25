@@ -103,7 +103,7 @@ code {
 	max-width: var(--measure-prose);
 }
 
-/* Listing pages (projects, minis): gutter on all sides, because their cards
+/* Listing pages (projects, blog): gutter on all sides, because their cards
    read as a grid rather than as a column of prose. */
 .page-wide {
 	padding: var(--page-gutter);

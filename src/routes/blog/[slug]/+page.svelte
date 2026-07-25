@@ -4,4 +4,4 @@
 	let { data } = $props();
 </script>
 
-<EntryPage {data} collection="minis" />
+<EntryPage {data} collection="blog" />

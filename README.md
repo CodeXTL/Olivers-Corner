@@ -37,7 +37,7 @@ npm run dev
 | Understand how the site works, or extend it | **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** |
 
 **The short version:** adding a write-up means adding one Markdown file to
-`src/content/projects/` or `src/content/minis/`. Its card, page, URL, table of
+`src/content/projects/` or `src/content/blog/`. Its card, page, URL, table of
 contents, and social preview all generate themselves.
 
 --- -->
@@ -59,11 +59,11 @@ static/            # images and video, one folder per write-up
 docs/              # architecture + content guides
 ```
 
-
 ## TODO
+
 - [ ] Fix TODO to make it more actionable.
 - [x] Set the real production domain in `src/lib/config.js`
-- [ ] Add blogpost pages ([how to add a collection](docs/ARCHITECTURE.md#add-a-whole-new-collection-eg-a-blog))
+- [x] Add blog pages (done 07/25/26; see [how to add a collection](docs/ARCHITECTURE.md#add-a-whole-new-collection-eg-notes))
 - [ ] Add project search & filtering (foundation in place — see ARCHITECTURE.md §10)
 - [ ] Add a sitemap and CI
 - [ ] Make homepage cleaner

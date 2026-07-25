@@ -34,9 +34,9 @@ the architecture, not a chore.
 
 ### Collections are configuration
 
-Projects and minis are not two features — they're one feature, twice. Adding a
-blog is a registry entry plus three one-line files, not a copy of the projects
-directory.
+Projects and the blog are not two features — they're one feature, twice. Adding
+a third collection is a registry entry plus three one-line files, not a copy of
+the projects directory.
 
 ```
         src/content/<collection>/*.md          ← you write these
@@ -62,7 +62,7 @@ directory.
 | Path                        | What it is                                                    |
 | --------------------------- | ------------------------------------------------------------- |
 | `src/content/projects/*.md` | One file per project. Source of truth.                        |
-| `src/content/minis/*.md`    | One file per mini. Identical format.                          |
+| `src/content/blog/*.md`     | One file per post. Identical format.                          |
 | `src/content/goals.md`      | A standalone page's prose (not part of a collection).         |
 | `static/<slug>/`            | Images and video for one entry. Folder name matches the slug. |
 
@@ -302,22 +302,25 @@ touching logic.
 
 ## 7. How to make common changes
 
-### Add a project or mini
+### Add a project or blog post
 
 See [CONTENT.md](CONTENT.md). One Markdown file.
 
-### Add a whole new collection (e.g. a blog)
+### Add a whole new collection (e.g. notes)
 
-1. Create `src/content/posts/`.
+`projects` and `blog` are both just registry entries wired up this way — a third
+collection is the same three steps.
+
+1. Create `src/content/notes/`.
 2. Add an entry to `collections` in `src/lib/content/collections.js`:
 
    ```js
-   posts: {
-   	name: 'posts',
-   	path: '/blog',
-   	navLabel: 'Blog',
-   	heading: 'Writing',
-   	description: 'Essays and notes.',
+   notes: {
+   	name: 'notes',
+   	path: '/notes',
+   	navLabel: 'Notes',
+   	heading: 'Notes',
+   	description: 'Short notes and asides.',
    	layout: 'list',
    	empty: 'Nothing published yet.'
    }
@@ -326,28 +329,28 @@ See [CONTENT.md](CONTENT.md). One Markdown file.
 3. Create three files:
 
    ```svelte
-   <!-- routes/blog/+page.svelte -->
+   <!-- routes/notes/+page.svelte -->
    <script>
    	import CollectionPage from '$lib/components/CollectionPage.svelte';
    </script>
 
-   <CollectionPage collection="posts" />
+   <CollectionPage collection="notes" />
    ```
 
    ```js
-   // routes/blog/[slug]/+page.js
+   // routes/notes/[slug]/+page.js
    import { entryRoute } from '$lib/content/index.js';
-   export const { load, entries } = entryRoute('posts');
+   export const { load, entries } = entryRoute('notes');
    ```
 
    ```svelte
-   <!-- routes/blog/[slug]/+page.svelte -->
+   <!-- routes/notes/[slug]/+page.svelte -->
    <script>
    	import EntryPage from '$lib/components/EntryPage.svelte';
    	let { data } = $props();
    </script>
 
-   <EntryPage {data} collection="posts" />
+   <EntryPage {data} collection="notes" />
    ```
 
 The listing, sorting, categories, prerendering, SEO, and the **nav link** all
