@@ -1,6 +1,6 @@
 <script>
 	// Site footer. On the homepage its top edge doubles as the ground the balls
-	// land on — see `groundLine()` in $lib/physics/balls.js, which finds this
+	// land on — see `groundLine()` in $lib/physics/balls.svelte.js, which finds this
 	// element by its .site-footer class.
 	//
 	// Links and the author name come from $lib/config.js so contact details are

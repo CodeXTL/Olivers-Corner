@@ -1,7 +1,7 @@
 <script>
 	// Site nav. Above the breakpoint it is a plain horizontal row; below it the
 	// links collapse behind a hamburger toggle. Breakpoint is kept in sync with
-	// MIN_BALL_WIDTH in $lib/physics/balls.js.
+	// MIN_BALL_WIDTH in $lib/physics/balls.svelte.js.
 	//
 	// The link list is NOT declared here — it comes from $lib/config.js, where
 	// the collection entries are derived from the content registry. That way a
